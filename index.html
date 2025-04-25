@@ -31,21 +31,21 @@
 
       // 단지 데이터: address 필드로 동적 지오코딩
       const complexes = [
-        { name: '이문 아이파크 자이',     address: '동대문구 이문동 이문 아이파크 자이',     moveIn: '2025.12', heating: '개별난방', units:[{size:'41㎡',price:'32.2천만원',count:168},{size:'59㎡',price:'46.4천만원',count:44}] },
-        { name: '리버센 SK뷰 롯데캐슬', address: '중랑구 중화동 리버센 SK뷰 롯데캐슬', moveIn: '2025.9',  heating: '개별난방', units:[{size:'49㎡',price:'33.6천만원',count:1},{size:'59㎡',price:'45.3천만원',count:5},{size:'70㎡',price:'49.2천만원',count:2},{size:'84㎡',price:'56.4천만원',count:3}] },
-        { name: '고덕 래미안 힐스테이트', address: '강동구 고덕동 고덕 래미안 힐스테이트',       heating: '지역난방', units:[{size:'59㎡',price:'50.0천만원',count:4}] },
-        { name: '강동 헤리티지 자이',     address: '강동구 고덕동 강동 헤리티지 자이',           heating: '개별난방', units:[{size:'59㎡',price:'48.4천만원',count:5}] },
-        { name: '올림픽파크 포레온',     address: '강동구 천호동 올림픽파크 포레온',               heating: '지역난방', units:[{size:'49㎡',price:'35.3천만원',count:2},{size:'59㎡',price:'42.4천만원',count:20}] },
-        { name: '롯데캐슬 이스트폴',     address: '광진구 자양동 롯데캐슬 이스트폴',             heating: '개별난방', units:[{size:'59㎡',price:'45.4천만원',count:43},{size:'79㎡',price:'57.8천만원',count:9},{size:'82㎡',price:'60.0천만원',count:5}] },
-        { name: '호반써밋 개봉',         address: '구로구 개봉동 호반써밋 개봉',                   heating: '개별난방', units:[{size:'59㎡',price:'25.9천만원',count:2}] },
-        { name: '청량리역 롯데캐슬 SKY-L65', address: '동대문구 청량리동 청량리역 롯데캐슬 SKY-L65', heating:'개별난방',units:[{size:'59㎡',price:'44.6천만원',count:5}]},
-        { name: '래미안 원펜타스',       address: '서초구 반포동 래미안 원펜타스',               heating:'지역난방',units:[{size:'59㎡',price:'97.5천만원',count:4}] },
-        { name: '롯데캐슬트윈골드',     address: '성북구 돈암동 롯데캐슬트윈골드',             heating:'개별난방',units:[{size:'59㎡',price:'39.0천만원',count:2},{size:'84㎡',price:'51.0천만원',count:1}]},
-        { name: '힐스테이트 e편한세상 문정', address:'송파구 문정동 힐스테이트 e편한세상 문정', heating:'개별난방',units:[{size:'49㎡',price:'31.9천만원',count:18}] },
-        { name: 'DMC SK뷰',              address: '은평구 증산동 DMC SK뷰',                     heating:'개별난방',units:[{size:'59㎡',price:'51.7천만원',count:1},{size:'84㎡',price:'59.4천만원',count:3}] },
-        { name: '센트레빌 아스테리움 시그니처', address:'은평구 진관동 센트레빌 아스테리움 시그니처', heating:'개별난방',units:[{size:'46㎡',price:'25.5천만원',count:2},{size:'59㎡',price:'32.6천만원',count:4}]},
-        { name: '가현 월디움 면목 1차', address: '중랑구 면목동 가현 월디움 면목 1차',           heating:'개별난방',units:[{size:'48㎡',price:'21.8천만원',count:2}] },
-        { name: '힐스테이트 관악센트씨엘', address:'관악구 신림동 힐스테이트 관악센트씨엘',     heating:'개별난방',units:[{size:'58㎡',price:'35.6천만원',count:12}]}  
+        { name: '이문 아이파크 자이',     address: '서울 동대문구 이문동 149-8',     moveIn: '2025.12', heating: '개별난방', units:[{size:'41㎡',price:'32.2천만원',count:168},{size:'59㎡',price:'46.4천만원',count:44}] },
+        { name: '리버센 SK뷰 롯데캐슬', address: '서울 중랑구 중화동 331-1', moveIn: '2025.9',  heating: '개별난방', units:[{size:'49㎡',price:'33.6천만원',count:1},{size:'59㎡',price:'45.3천만원',count:5},{size:'70㎡',price:'49.2천만원',count:2},{size:'84㎡',price:'56.4천만원',count:3}] },
+        { name: '고덕 래미안 힐스테이트', address: '서울 강동구 아리수로50길 50',       heating: '지역난방', units:[{size:'59㎡',price:'50.0천만원',count:4}] },
+        { name: '강동 헤리티지 자이',     address: '서울 강동구 천중로 264',           heating: '개별난방', units:[{size:'59㎡',price:'48.4천만원',count:5}] },
+        { name: '올림픽파크 포레온',     address: '서울 강동구 양재대로 1393',               heating: '지역난방', units:[{size:'49㎡',price:'35.3천만원',count:2},{size:'59㎡',price:'42.4천만원',count:20}] },
+        { name: '롯데캐슬 이스트폴',     address: '서울 광진구 아차산로 420',             heating: '개별난방', units:[{size:'59㎡',price:'45.4천만원',count:43},{size:'79㎡',price:'57.8천만원',count:9},{size:'82㎡',price:'60.0천만원',count:5}] },
+        { name: '호반써밋 개봉',         address: '서울 구로구 고척로22길 36',                   heating: '개별난방', units:[{size:'59㎡',price:'25.9천만원',count:2}] },
+        { name: '청량리역 롯데캐슬 SKY-L65', address: '서울 동대문구 왕산로 200', heating:'개별난방',units:[{size:'59㎡',price:'44.6천만원',count:5}]},
+        { name: '래미안 원펜타스',       address: '서울 서초구 신반포로15길 1',               heating:'지역난방',units:[{size:'59㎡',price:'97.5천만원',count:4}] },
+        { name: '롯데캐슬트윈골드',     address: '서울 성북구 길음로 11',             heating:'개별난방',units:[{size:'59㎡',price:'39.0천만원',count:2},{size:'84㎡',price:'51.0천만원',count:1}]},
+        { name: '힐스테이트 e편한세상 문정', address:'서울 송파구 송이로31길 20', heating:'개별난방',units:[{size:'49㎡',price:'31.9천만원',count:18}] },
+        { name: 'DMC SK뷰',              address: '서울 은평구 수색로 216',                     heating:'개별난방',units:[{size:'59㎡',price:'51.7천만원',count:1},{size:'84㎡',price:'59.4천만원',count:3}] },
+        { name: '센트레빌 아스테리움 시그니처', address:'서울 은평구 갈현로7길 25', heating:'개별난방',units:[{size:'46㎡',price:'25.5천만원',count:2},{size:'59㎡',price:'32.6천만원',count:4}]},
+        { name: '가현 월디움 면목 1차', address: '서울 중랑구 겸재로42길 24',           heating:'개별난방',units:[{size:'48㎡',price:'21.8천만원',count:2}] },
+        { name: '힐스테이트 관악센트씨엘', address:'서울 관악구 구암5길 28',     heating:'개별난방',units:[{size:'58㎡',price:'35.6천만원',count:12}]}  
       ];
 
       const geocoder = new kakao.maps.services.Geocoder();
