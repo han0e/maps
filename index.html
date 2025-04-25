@@ -3,83 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>서울시 장기전세주택2 공급지도</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <title>서울시 장기전세주택2 공급지도 (Kakao Maps)</title>
+  <!-- Kakao Maps JavaScript SDK: 'YOUR_APP_KEY'을 실제 앱 키로 교체하고 autoload=false 추가 -->
+  <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=cc36e0ea25758cc3e8da9744bfd7e612&libraries=services&autoload=false"></script>
   <style>
     /* 모바일 퍼스트 전체화면 맵 설정 */
     html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
     #map { position: absolute; top: env(safe-area-inset-top); left: env(safe-area-inset-left); right: env(safe-area-inset-right); bottom: env(safe-area-inset-bottom); width: 100%; height: 100%; }
-    /* 모바일 폰트 및 팝업 스타일 */
-    .leaflet-popup-content-wrapper {
-      font-size: 16px;
-      line-height: 1.4;
-    }
-    @media (max-width: 600px) {
-      .leaflet-popup-content-wrapper { font-size: 14px; }
-    }
+    /* InfoWindow 스타일 */
+    .info-window { font-size: 14px; line-height: 1.4; padding: 8px; }
+    @media (max-width: 600px) { .info-window { font-size: 12px; } }
   </style>
 </head>
 <body>
   <div id="map"></div>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    // 모바일 터치 활성화 (Leaflet 기본 지원)
-    let map;
-    if (L.Browser.mobile) {
-      map = L.map('map', { tap: true, touchZoom: true, scrollWheelZoom: false }).setView([37.5665, 126.9780], 11);
-    } else {
-      map = L.map('map').setView([37.5665, 126.9780], 11);
-    }
+    // Kakao Maps SDK 비동기 로드 후 실행
+    kakao.maps.load(function() {
+      // 지도 초기화
+      const mapContainer = document.getElementById('map');
+      const mapOptions = {
+        center: new kakao.maps.LatLng(37.5665, 126.9780),
+        level: 10,
+        draggable: true,
+        zoomable: true
+      };
+      const map = new kakao.maps.Map(mapContainer, mapOptions);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+      // 변환 함수
+      function toPyeong(sizeStr) { const m2 = parseFloat(sizeStr.replace('㎡','')); return (m2/3.3058).toFixed(1); }
+      function toEok(priceStr) { const thousand = parseFloat(priceStr.replace(/[^0-9.]/g, '')); return (thousand/10).toFixed(2); }
 
-    // 변환 함수
-    function toPyeong(sizeStr) {
-      const m2 = parseFloat(sizeStr.replace('㎡', ''));
-      return (m2 / 3.3058).toFixed(1);
-    }
-    function toEok(priceStr) {
-      const thousand = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
-      return (thousand / 10).toFixed(2);
-    }
+      // 단지 데이터 배열
+      const complexes = [
+        { name: "이문 아이파크 자이", district: "동대문구", lat: 37.5931, lon: 127.0556, moveIn: "2025.12", heating: "개별난방", units: [ { size: "41㎡", price: "32.2천만원", count: 168 }, { size: "59㎡", price: "46.4천만원", count: 44 } ] },
+        { name: "리버센 SK뷰 롯데캐슬", district: "중랑구", lat: 37.5875, lon: 127.0932, moveIn: "2025.9", heating: "개별난방", units: [ { size: "49㎡", price: "33.6천만원", count: 1 }, { size: "59㎡", price: "45.3천만원", count: 5 }, { size: "70㎡", price: "49.2천만원", count: 2 }, { size: "84㎡", price: "56.4천만원", count: 3 } ] },
+        { name: "고덕 래미안 힐스테이트", district: "강동구", lat: 37.5382, lon: 127.1476, heating: "지역난방", units: [ { size: "59㎡", price: "50.0천만원", count: 4 } ] },
+        { name: "강동 헤리티지 자이", district: "강동구", lat: 37.5405, lon: 127.1641, heating: "개별난방", units: [ { size: "59㎡", price: "48.4천만원", count: 5 } ] },
+        { name: "올림픽파크 포레온", district: "강동구", lat: 37.5513, lon: 127.1278, heating: "지역난방", units: [ { size: "49㎡", price: "35.3천만원", count: 2 }, { size: "59㎡", price: "42.4천만원", count: 20 } ] },
+        { name: "롯데캐슬 이스트폴", district: "광진구", lat: 37.5359, lon: 127.0768, heating: "개별난방", units: [ { size: "59㎡", price: "45.4천만원", count: 43 }, { size: "79㎡", price: "57.8천만원", count: 9 }, { size: "82㎡", price: "60.0천만원", count: 5 } ] },
+        { name: "호반써밋 개봉", district: "구로구", lat: 37.5001, lon: 126.8854, heating: "개별난방", units: [ { size: "59㎡", price: "25.9천만원", count: 2 } ] },
+        { name: "청량리역 롯데캐슬 SKY-L65", district: "동대문구", lat: 37.5803, lon: 127.0436, heating: "개별난방", units: [ { size: "59㎡", price: "44.6천만원", count: 5 } ] },
+        { name: "래미안 원펜타스", district: "서초구", lat: 37.4971, lon: 127.0078, heating: "지역난방", units: [ { size: "59㎡", price: "97.5천만원", count: 4 } ] },
+        { name: "롯데캐슬트윈골드", district: "성북구", lat: 37.5892, lon: 127.0154, heating: "개별난방", units: [ { size: "59㎡", price: "39.0천만원", count: 2 }, { size: "84㎡", price: "51.0천만원", count: 1 } ] },
+        { name: "힐스테이트 e편한세상 문정", district: "송파구", lat: 37.4913, lon: 127.1185, heating: "개별난방", units: [ { size: "49㎡", price: "31.9천만원", count: 18 } ] },
+        { name: "DMC SK뷰", district: "은평구", lat: 37.5789, lon: 126.8930, heating: "개별난방", units: [ { size: "59㎡", price: "51.7천만원", count: 1 }, { size: "84㎡", price: "59.4천만원", count: 3 } ] },
+        { name: "센트레빌 아스테리움 시그니처", district: "은평구", lat: 37.6195, lon: 126.9124, heating: "개별난방", units: [ { size: "46㎡", price: "25.5천만원", count: 2 }, { size: "59㎡", price: "32.6천만원", count: 4 } ] },
+        { name: "가현 월디움 면목 1차", district: "중랑구", lat: 37.5842, lon: 127.0897, heating: "개별난방", units: [ { size: "48㎡", price: "21.8천만원", count: 2 } ] },
+        { name: "힐스테이트 관악센트씨엘", district: "관악구", lat: 37.4854, lon: 126.9270, heating: "개별난방", units: [ { size: "58㎡", price: "35.6천만원", count: 12 } ] }
+      ];
 
-    // 단지 데이터 배열
-    const complexes = [
-      { name: "이문 아이파크 자이", district: "동대문구", lat: 37.5931, lon: 127.0556, moveIn: "2025.12", heating: "개별난방", units: [ { size: "41㎡", price: "32.2천만원", count: 168 }, { size: "59㎡", price: "46.4천만원", count: 44 } ] },
-      { name: "리버센 SK뷰 롯데캐슬", district: "중랑구", lat: 37.5875, lon: 127.0932, moveIn: "2025.9", heating: "개별난방", units: [ { size: "49㎡", price: "33.6천만원", count: 1 }, { size: "59㎡", price: "45.3천만원", count: 5 }, { size: "70㎡", price: "49.2천만원", count: 2 }, { size: "84㎡", price: "56.4천만원", count: 3 } ] },
-      { name: "고덕 래미안 힐스테이트", district: "강동구", lat: 37.5382, lon: 127.1476, heating: "지역난방", units: [ { size: "59㎡", price: "50.0천만원", count: 4 } ] },
-      { name: "강동 헤리티지 자이", district: "강동구", lat: 37.5405, lon: 127.1641, heating: "개별난방", units: [ { size: "59㎡", price: "48.4천만원", count: 5 } ] },
-      { name: "올림픽파크 포레온", district: "강동구", lat: 37.5513, lon: 127.1278, heating: "지역난방", units: [ { size: "49㎡", price: "35.3천만원", count: 2 }, { size: "59㎡", price: "42.4천만원", count: 20 } ] },
-      { name: "롯데캐슬 이스트폴", district: "광진구", lat: 37.5359, lon: 127.0768, heating: "개별난방", units: [ { size: "59㎡", price: "45.4천만원", count: 43 }, { size: "79㎡", price: "57.8천만원", count: 9 }, { size: "82㎡", price: "60.0천만원", count: 5 } ] },
-      { name: "호반써밋 개봉", district: "구로구", lat: 37.5001, lon: 126.8854, heating: "개별난방", units: [ { size: "59㎡", price: "25.9천만원", count: 2 } ] },
-      { name: "청량리역 롯데캐슬 SKY-L65", district: "동대문구", lat: 37.5803, lon: 127.0436, heating: "개별난방", units: [ { size: "59㎡", price: "44.6천만원", count: 5 } ] },
-      { name: "래미안 원펜타스", district: "서초구", lat: 37.4971, lon: 127.0078, heating: "지역난방", units: [ { size: "59㎡", price: "97.5천만원", count: 4 } ] },
-      { name: "롯데캐슬트윈골드", district: "성북구", lat: 37.5892, lon: 127.0154, heating: "개별난방", units: [ { size: "59㎡", price: "39.0천만원", count: 2 }, { size: "84㎡", price: "51.0천만원", count: 1 } ] },
-      { name: "힐스테이트 e편한세상 문정", district: "송파구", lat: 37.4913, lon: 127.1185, heating: "개별난방", units: [ { size: "49㎡", price: "31.9천만원", count: 18 } ] },
-      { name: "DMC SK뷰", district: "은평구", lat: 37.5789, lon: 126.8930, heating: "개별난방", units: [ { size: "59㎡", price: "51.7천만원", count: 1 }, { size: "84㎡", price: "59.4천만원", count: 3 } ] },
-      { name: "센트레빌 아스테리움 시그니처", district: "은평구", lat: 37.6195, lon: 126.9124, heating: "개별난방", units: [ { size: "46㎡", price: "25.5천만원", count: 2 }, { size: "59㎡", price: "32.6천만원", count: 4 } ] },
-      { name: "가현 월디움 면목 1차", district: "중랑구", lat: 37.5842, lon: 127.0897, heating: "개별난방", units: [ { size: "48㎡", price: "21.8천만원", count: 2 } ] },
-      { name: "힐스테이트 관악센트씨엘", district: "관악구", lat: 37.4854, lon: 126.9270, heating: "개별난방", units: [ { size: "58㎡", price: "35.6천만원", count: 12 } ] }
-    ];
+      // 마커 및 InfoWindow 바인딩
+      complexes.forEach(c => {
+        const position = new kakao.maps.LatLng(c.lat, c.lon);
+        const marker = new kakao.maps.Marker({ position });
+        marker.setMap(map);
 
-    // 팝업 옵션 설정 (모바일 터치용 충분한 패딩)
-    const popupOptions = { maxWidth: 260, minWidth: 160, autoPanPadding: [20, 20], closeButton: true };
-
-    // 마커 추가
-    complexes.forEach(c => {
-      const marker = L.marker([c.lat, c.lon]).addTo(map);
-      let content = `<strong>${c.name}</strong><br>${c.district}<br>`;
-      if (c.moveIn) content += `입주예정: ${c.moveIn}<br>`;
-      content += `난방: ${c.heating}<br>`;
-      c.units.forEach(u => {
-        const p = toPyeong(u.size);
-        const e = toEok(u.price);
-        content += `${p}평 · ${e}억원 · ${u.count}세대<br>`;
+        const content = `
+          <div class="info-window">
+            <strong>${c.name}</strong><br>
+            ${c.district}<br>
+            ${c.moveIn ? `입주예정: ${c.moveIn}<br>` : ''}
+            난방: ${c.heating}<br>
+            ${c.units.map(u => `${toPyeong(u.size)}평 · ${toEok(u.price)}억원 · ${u.count}세대`).join('<br>')}
+          </div>
+        `;
+        const infowindow = new kakao.maps.InfoWindow({ content });
+        kakao.maps.event.addListener(marker, 'click', () => infowindow.open(map, marker));
       });
-      marker.bindPopup(content, popupOptions);
     });
   </script>
 </body>
