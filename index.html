@@ -434,15 +434,12 @@
         document.getElementById('avgArea').textContent = avgPyeong.toFixed(1) + '평';
 
         // 페이지 로드 완료 후 카카오맵 초기화
-        window.addEventListener('load', function() {
-            // 카카오맵 API 로드 확인
-            if (typeof kakao !== 'undefined' && kakao.maps) {
-                kakao.maps.load(initKakaoMap);
-            } else {
-                console.error('카카오맵 API 로드 실패');
-                showErrorMessage();
-            }
-        });
+        // 페이지 로드 완료 후 카카오맵 초기화
+window.addEventListener('load', function() {
+    // kakao.maps.load()를 직접 호출하여 지도 API를 로드합니다.
+    // 로드가 완료되면 콜백 함수(initKakaoMap)가 실행됩니다.
+    kakao.maps.load(initKakaoMap); 
+});
     </script>
 </body>
 </html>
