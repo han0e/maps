@@ -4,194 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>신혼부부 행복주택 지도</title>
-    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=746a56de7e982f3f195ec96c7ade2b76&autoload=false"></script>
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=746a56de7e982f3f195ec96c7ade2b76&libraries=services&autoload=false"></script>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 2.5em;
-            font-weight: bold;
-        }
-        .header p {
-            margin: 10px 0 0 0;
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-        .map-container {
-            position: relative;
-            height: 600px;
-            margin: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-        .info-panel {
-            padding: 20px;
-            background: #f8f9fa;
-            border-top: 1px solid #e9ecef;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
-            margin: 10px 0;
-        }
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            padding: 10px 15px;
-            border-radius: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-        }
-        .marker-overlay {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            max-width: 280px;
-            min-width: 200px;
-            position: relative;
-            border: 1px solid #e9ecef;
-        }
-        .marker-overlay::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 10px solid white;
-        }
-        .marker-title {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-        .marker-detail {
-            color: #666;
-            margin: 5px 0;
-            font-size: 0.9em;
-        }
-        .marker-price {
-            color: #e74c3c;
-            font-weight: bold;
-            font-size: 1.0em;
-        }
-        .marker-area {
-            color: #27ae60;
-            font-weight: bold;
-        }
-        .custom-marker {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 3px solid white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        .custom-marker:hover {
-            transform: scale(1.1);
-        }
-        .error-message {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            background: #f8f9fa;
-            color: #6c757d;
-            text-align: center;
-            padding: 40px;
-        }
-        .demo-data {
-            text-align: left;
-            margin-top: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .demo-item {
-            margin: 10px 0;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        .demo-item strong {
-            color: #333;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .demo-item span {
-            color: #666;
-            font-size: 0.9em;
-        }
+        /* CSS 스타일은 원본과 동일하게 유지됩니다. */
+        body { font-family: 'Arial', sans-serif; margin: 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 2.5em; font-weight: bold; }
+        .header p { margin: 10px 0 0 0; font-size: 1.2em; opacity: 0.9; }
+        .map-container { position: relative; height: 600px; margin: 20px; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        #map { width: 100%; height: 100%; }
+        .info-panel { padding: 20px; background: #f8f9fa; border-top: 1px solid #e9ecef; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-number { font-size: 2em; font-weight: bold; color: #667eea; margin: 10px 0; }
+        .stat-label { color: #6c757d; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; }
+        .legend { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 8px; background: white; padding: 10px 15px; border-radius: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .legend-color { width: 16px; height: 16px; border-radius: 50%; }
+
+        /* 정보창(InfoWindow) 스타일 */
+        .info-window-content { padding: 15px; line-height: 1.6; font-size: 14px; }
+        .info-window-content .title { font-weight: bold; font-size: 16px; margin-bottom: 10px; color: #333; }
+        .info-window-content .detail { margin: 4px 0; color: #555; }
+        .info-window-content .price { color: #e74c3c; font-weight: bold; }
+        .info-window-content .area { color: #27ae60; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -208,43 +46,43 @@
         <div class="info-panel">
             <div class="stats">
                 <div class="stat-card">
-                    <div class="stat-number" id="totalCount">26</div>
+                    <div class="stat-number" id="totalCount"></div>
                     <div class="stat-label">총 단지 수</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="avgDeposit">152만</div>
+                    <div class="stat-number" id="avgDeposit"></div>
                     <div class="stat-label">평균 보증금</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="avgRent">59만</div>
+                    <div class="stat-number" id="avgRent"></div>
                     <div class="stat-label">평균 월세</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="avgArea">14.5평</div>
+                    <div class="stat-number" id="avgArea"></div>
                     <div class="stat-label">평균 면적</div>
                 </div>
             </div>
             
             <div class="legend">
                 <div class="legend-item">
-                    <div class="legend-color" style="background-color: #e74c3c;"></div>
-                    <span>고가 (보증금 200만원 이상)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #f39c12;"></div>
-                    <span>중가 (보증금 150~200만원)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #27ae60;"></div>
-                    <span>저가 (보증금 150만원 미만)</span>
-                </div>
+                     <div class="legend-color" style="background-color: #e74c3c;"></div>
+                     <span>고가 (보증금 2억 이상)</span>
+                 </div>
+                 <div class="legend-item">
+                     <div class="legend-color" style="background-color: #f39c12;"></div>
+                     <span>중가 (보증금 1.5억~2억)</span>
+                 </div>
+                 <div class="legend-item">
+                     <div class="legend-color" style="background-color: #27ae60;"></div>
+                     <span>저가 (보증금 1.5억 미만)</span>
+                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 신혼부부 행복주택 데이터
         const housingData = [
+            // 데이터는 원본과 동일하게 유지
             {district: '강남구', complex: '삼성동센트럴아이파크', areaType: '49㎡', deposit: 184000, monthlyRent: 721000, exclusiveArea: 49.94, pyeong: 15.1},
             {district: '강남구', complex: '래미안개포루체하임', areaType: '49㎡', deposit: 180800, monthlyRent: 710000, exclusiveArea: 49.99, pyeong: 15.1},
             {district: '강남구', complex: '디에이치자이 개포', areaType: '44㎡', deposit: 164000, monthlyRent: 641000, exclusiveArea: 44.84, pyeong: 13.6},
@@ -267,160 +105,88 @@
             {district: '송파구', complex: '송파시그니처롯데캐슬', areaType: '39㎡', deposit: 143760, monthlyRent: 491000, exclusiveArea: 39.9, pyeong: 12.1},
             {district: '양천구', complex: '신목동비바힐스', areaType: '58㎡', deposit: 128800, monthlyRent: 516000, exclusiveArea: 58.9, pyeong: 17.8},
             {district: '영등포구', complex: '당산센트럴아이파크', areaType: '46㎡', deposit: 135200, monthlyRent: 506000, exclusiveArea: 46.98, pyeong: 14.2},
-            {district: '용산구', complex: '용산센트럴파크 헤링턴스퀘어', areaType: '40㎡', deposit: 213600, monthlyRent: 872000, exclusiveArea: 40.67, pyeong: 12.3},
+            {district: '용산구', complex: '용산센트럴파크 해링턴스퀘어', areaType: '40㎡', deposit: 213600, monthlyRent: 872000, exclusiveArea: 40.67, pyeong: 12.3},
             {district: '은평구', complex: '녹번역이편한세상캐슬', areaType: '39㎡', deposit: 145200, monthlyRent: 529000, exclusiveArea: 39.95, pyeong: 12.1},
             {district: '은평구', complex: 'DMC센트럴자이', areaType: '40㎡', deposit: 96660, monthlyRent: 354000, exclusiveArea: 40.21, pyeong: 12.2},
             {district: '종로구', complex: '경희궁자이', areaType: '39㎡', deposit: 147200, monthlyRent: 577000, exclusiveArea: 39.06, pyeong: 11.8}
         ];
 
-        // 구별 대략적인 좌표
-        const districtCoords = {
-            '강남구': [37.5173, 127.0473],
-            '강동구': [37.5301, 127.1238],
-            '강북구': [37.6369, 127.0258],
-            '구로구': [37.4954, 126.8876],
-            '노원구': [37.6541, 127.0568],
-            '동작구': [37.5124, 126.9393],
-            '서대문구': [37.5791, 126.9368],
-            '서초구': [37.4837, 127.0324],
-            '성북구': [37.5894, 127.0167],
-            '송파구': [37.5145, 127.1059],
-            '양천구': [37.5169, 126.8664],
-            '영등포구': [37.5263, 126.8963],
-            '용산구': [37.5384, 126.9908],
-            '은평구': [37.6176, 126.9227],
-            '종로구': [37.5735, 126.9788]
-        };
+        // 1. 안정적인 API 로딩 및 실행
+        kakao.maps.load(function() {
+            const mapContainer = document.getElementById('map');
+            const mapOption = {
+                center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 중심
+                level: 8
+            };
+            const map = new kakao.maps.Map(mapContainer, mapOption);
 
-        // 카카오맵 초기화 함수
-        function initKakaoMap() {
-            // 카카오맵 API 체크
-            if (typeof kakao === 'undefined' || !kakao.maps) {
-                console.error('카카오맵 API가 로드되지 않았습니다.');
-                showErrorMessage();
-                return;
-            }
+            // 2. 주소-좌표 변환 객체 생성
+            const geocoder = new kakao.maps.services.Geocoder();
+            let currentInfoWindow = null; // 현재 열려있는 정보창을 저장할 변수
 
-            try {
-                console.log('카카오맵 초기화 시작...');
-                const mapContainer = document.getElementById('map');
-                const mapOption = {
-                    center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 중심
-                    level: 8
-                };
+            housingData.forEach(item => {
+                // 3. 주소로 좌표를 검색 (구 이름 + 단지 이름으로 검색 정확도 향상)
+                geocoder.addressSearch(`서울 ${item.district} ${item.complex}`, function(result, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-                const map = new kakao.maps.Map(mapContainer, mapOption);
-                console.log('카카오맵 생성 완료');
-                
-                // 마커 생성
-                createMarkers(map);
-                
-            } catch (error) {
-                console.error('카카오맵 초기화 오류:', error);
-                showErrorMessage();
-            }
-        }
-
-        function createMarkers(map) {
-            console.log('마커 생성 시작...');
-            const markers = [];
-            const overlays = [];
-
-            housingData.forEach((item, index) => {
-                const coords = districtCoords[item.district];
-                if (coords) {
-                    try {
-                        // 가격에 따른 마커 색상 결정
-                        let markerColor = '#27ae60'; // 기본 녹색
+                        // 마커 이미지 결정 (가격 기준)
+                        let imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_0.png'; // 기본
                         if (item.deposit >= 200000) {
-                            markerColor = '#e74c3c'; // 빨간색
+                            imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'; // 고가
                         } else if (item.deposit >= 150000) {
-                            markerColor = '#f39c12'; // 주황색
+                             imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_yellow.png'; // 중가
                         }
+                        const imageSize = new kakao.maps.Size(36, 37);
+                        const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
-                        // 같은 구에 여러 단지가 있을 경우 위치 조정
-                        const offset = (index % 5) * 0.005;
-                        const offsetY = Math.floor(index / 5) * 0.005;
-                        const position = new kakao.maps.LatLng(coords[0] + offset, coords[1] + offsetY);
-
-                        // 커스텀 마커 생성
-                        const markerElement = document.createElement('div');
-                        markerElement.className = 'custom-marker';
-                        markerElement.style.backgroundColor = markerColor;
-                        markerElement.innerHTML = '🏠';
-
-                        const customOverlay = new kakao.maps.CustomOverlay({
-                            position: position,
-                            content: markerElement,
-                            yAnchor: 1
+                        // 4. 표준 마커 생성
+                        const marker = new kakao.maps.Marker({
+                            map: map,
+                            position: coords,
+                            image: markerImage,
+                            title: item.complex
                         });
 
-                        customOverlay.setMap(map);
+                        // 정보창에 들어갈 내용
+                        const content = `
+                            <div class="info-window-content">
+                                <div class="title">${item.complex}</div>
+                                <div class="detail">📍 ${item.district} | ${item.areaType}</div>
+                                <div class="detail price">💰 보증금: ${(item.deposit / 10000).toLocaleString()}만원</div>
+                                <div class="detail price">🏠 월세: ${(item.monthlyRent / 10000).toLocaleString()}만원</div>
+                                <div class="detail area">📐 면적: ${item.pyeong}평 (${item.exclusiveArea}㎡)</div>
+                            </div>`;
 
-                        // 정보 오버레이 생성
-                        const infoContent = `
-                            <div class="marker-overlay">
-                                <div class="marker-title">${item.complex}</div>
-                                <div class="marker-detail">📍 ${item.district} | ${item.areaType}</div>
-                                <div class="marker-detail marker-price">💰 보증금: ${(item.deposit/10000).toFixed(0)}만원</div>
-                                <div class="marker-detail marker-price">🏠 월세: ${(item.monthlyRent/10000).toFixed(0)}만원</div>
-                                <div class="marker-detail marker-area">📐 주거전용: ${item.exclusiveArea}㎡ (${item.pyeong}평)</div>
-                            </div>
-                        `;
-
-                        const infoOverlay = new kakao.maps.CustomOverlay({
-                            content: infoContent,
-                            position: position,
-                            yAnchor: 1.8,
-                            xAnchor: 0.5
+                        const infoWindow = new kakao.maps.InfoWindow({
+                            content: content,
+                            removable: true // 닫기 버튼 표시
                         });
 
-                        // 마커 클릭 이벤트
-                        markerElement.addEventListener('click', function() {
-                            // 모든 정보 오버레이 숨기기
-                            overlays.forEach(overlay => overlay.setMap(null));
-                            
-                            // 클릭한 마커의 정보 오버레이 표시
-                            infoOverlay.setMap(map);
-                            
-                            // 해당 위치로 지도 이동
-                            map.panTo(position);
+                        // 5. 마커에 클릭 이벤트 등록
+                        kakao.maps.event.addListener(marker, 'click', function() {
+                            // 다른 정보창이 열려있으면 닫기
+                            if (currentInfoWindow) {
+                                currentInfoWindow.close();
+                            }
+                            infoWindow.open(map, marker);
+                            currentInfoWindow = infoWindow;
+                            map.panTo(coords); // 부드럽게 지도를 중심으로 이동
                         });
-
-                        markers.push(customOverlay);
-                        overlays.push(infoOverlay);
-                    } catch (error) {
-                        console.error(`마커 생성 오류 (${item.complex}):`, error);
+                    } else {
+                        console.warn(`주소 검색 실패: ${item.district} ${item.complex}`);
                     }
+                });
+            });
+
+            // 지도 클릭 시 정보창 닫기
+            kakao.maps.event.addListener(map, 'click', function() {
+                if (currentInfoWindow) {
+                    currentInfoWindow.close();
+                    currentInfoWindow = null;
                 }
             });
-
-            // 지도 클릭 시 모든 정보 오버레이 숨기기
-            kakao.maps.event.addListener(map, 'click', function() {
-                overlays.forEach(overlay => overlay.setMap(null));
-            });
-
-            console.log(`총 ${markers.length}개 마커 생성 완료`);
-        }
-
-        function showErrorMessage() {
-            document.getElementById('map').innerHTML = `
-                <div class="error-message">
-                    <div>
-                        <h3>⚠️ 카카오맵 로딩 중...</h3>
-                        <p>잠시 후 다시 시도해주세요.</p>
-                        <div class="demo-data">
-                            ${housingData.slice(0, 10).map((item, index) => `
-                                <div class="demo-item">
-                                    <strong>${item.district} ${item.complex}</strong>
-                                    <span>보증금: ${(item.deposit/10000).toFixed(0)}만원 | 월세: ${(item.monthlyRent/10000).toFixed(0)}만원 | 주거전용: ${item.exclusiveArea}㎡ (${item.pyeong}평)</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+        });
 
         // 통계 계산 및 표시
         const totalCount = housingData.length;
@@ -429,17 +195,9 @@
         const avgPyeong = housingData.reduce((sum, item) => sum + item.pyeong, 0) / totalCount;
 
         document.getElementById('totalCount').textContent = totalCount;
-        document.getElementById('avgDeposit').textContent = (avgDeposit/10000).toFixed(0) + '만';
-        document.getElementById('avgRent').textContent = (avgRent/10000).toFixed(0) + '만';
+        document.getElementById('avgDeposit').textContent = (avgDeposit / 10000).toFixed(0) + '만원';
+        document.getElementById('avgRent').textContent = (avgRent / 10000).toFixed(0) + '만원';
         document.getElementById('avgArea').textContent = avgPyeong.toFixed(1) + '평';
-
-        // 페이지 로드 완료 후 카카오맵 초기화
-        // 페이지 로드 완료 후 카카오맵 초기화
-window.addEventListener('load', function() {
-    // kakao.maps.load()를 직접 호출하여 지도 API를 로드합니다.
-    // 로드가 완료되면 콜백 함수(initKakaoMap)가 실행됩니다.
-    kakao.maps.load(initKakaoMap); 
-});
     </script>
 </body>
 </html>
