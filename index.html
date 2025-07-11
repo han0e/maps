@@ -3,89 +3,160 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>서울시 장기전세주택2 공급지도 (Kakao Maps)</title>
-  <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=cc36e0ea25758cc3e8da9744bfd7e612&libraries=services&autoload=false"></script>
+  <title>2025년 2차 신혼부부 행복주택 공급 지도</title>
+  <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=746a56de7e982f3f195ec96c7ade2b76&libraries=services&autoload=false"></script>
   <style>
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
-    #map { position: absolute; top: env(safe-area-inset-top); left: env(safe-area-inset-left);
-           right: env(safe-area-inset-right); bottom: env(safe-area-inset-bottom);
-           width: 100%; height: 100%; }
-    .info-window { font-size: 14px; line-height: 1.4; padding: 8px; }
-    @media (max-width: 600px) { .info-window { font-size: 12px; } }
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; }
+    #map { width: 100%; height: 100%; }
+    .info-window { padding: 12px; line-height: 1.6; }
+    .info-window .title { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+    .info-window .address { font-size: 13px; color: #555; margin-bottom: 10px; }
+    .info-window .unit { border-top: 1px solid #eee; padding-top: 5px; margin-top: 5px; font-size: 13px; }
+    .info-window .unit strong { color: #007bff; }
   </style>
 </head>
 <body>
   <div id="map"></div>
   <script>
-    // ✅ 모든 페이지 리소스가 로드된 후 스크립트를 실행하도록 수정
+    // 페이지의 모든 리소스가 로드된 후 스크립트를 실행합니다.
     window.addEventListener('load', function() {
-      // Kakao Maps SDK 비동기 로드
+
+      // Kakao Maps SDK가 로드되면 지도를 초기화합니다.
       kakao.maps.load(function() {
-        const map = new kakao.maps.Map(
-          document.getElementById('map'),
-          { center: new kakao.maps.LatLng(37.5665, 126.9780), level: 10 }
-        );
+        const mapContainer = document.getElementById('map');
+        const mapOption = {
+          center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 중심
+          level: 8
+        };
+        const map = new kakao.maps.Map(mapContainer, mapOption);
+        const geocoder = new kakao.maps.services.Geocoder();
+        let currentInfoWindow = null;
 
-        // 단위 변환
-        function toPyeong(size) { return (parseFloat(size.replace('㎡',''))/3.3058).toFixed(1); }
-        function toEok(price) { return (parseFloat(price.replace(/[^0-9.]/g,''))/10).toFixed(2); }
-
-        // 단지 데이터: address 필드로 동적 지오코딩
-        const complexes = [
-            { name: '이문 아이파크 자이',     address: '서울 동대문구 이문동 149-8',     moveIn: '2025.12', heating: '개별난방', units:[{size:'41㎡',price:'32.2천만원',count:168},{size:'59㎡',price:'46.4천만원',count:44}] },
-            { name: '리버센 SK뷰 롯데캐슬', address: '서울 중랑구 중화동 331-1', moveIn: '2025.9',  heating: '개별난방', units:[{size:'49㎡',price:'33.6천만원',count:1},{size:'59㎡',price:'45.3천만원',count:5},{size:'70㎡',price:'49.2천만원',count:2},{size:'84㎡',price:'56.4천만원',count:3}] },
-            { name: '고덕 래미안 힐스테이트', address: '서울 강동구 아리수로50길 50',       heating: '지역난방', units:[{size:'59㎡',price:'50.0천만원',count:4}] },
-            { name: '강동 헤리티지 자이',     address: '서울 강동구 천중로 264',           heating: '개별난방', units:[{size:'59㎡',price:'48.4천만원',count:5}] },
-            { name: '올림픽파크 포레온',     address: '서울 강동구 양재대로 1393',               heating: '지역난방', units:[{size:'49㎡',price:'35.3천만원',count:2},{size:'59㎡',price:'42.4천만원',count:20}] },
-            { name: '롯데캐슬 이스트폴',     address: '서울 광진구 아차산로 420',             heating: '개별난방', units:[{size:'59㎡',price:'45.4천만원',count:43},{size:'79㎡',price:'57.8천만원',count:9},{size:'82㎡',price:'60.0천만원',count:5}] },
-            { name: '호반써밋 개봉',         address: '서울 구로구 고척로22길 36',                   heating: '개별난방', units:[{size:'59㎡',price:'25.9천만원',count:2}] },
-            { name: '청량리역 롯데캐슬 SKY-L65', address: '서울 동대문구 왕산로 200', heating:'개별난방',units:[{size:'59㎡',price:'44.6천만원',count:5}]},
-            { name: '래미안 원펜타스',       address: '서울 서초구 신반포로15길 1',               heating:'지역난방',units:[{size:'59㎡',price:'97.5천만원',count:4}] },
-            { name: '롯데캐슬트윈골드',     address: '서울 성북구 길음로 11',             heating:'개별난방',units:[{size:'59㎡',price:'39.0천만원',count:2},{size:'84㎡',price:'51.0천만원',count:1}]},
-            { name: '힐스테이트 e편한세상 문정', address:'서울 송파구 송이로31길 20', heating:'개별난방',units:[{size:'49㎡',price:'31.9천만원',count:18}] },
-            { name: 'DMC SK뷰',              address: '서울 은평구 수색로 216',                     heating:'개별난방',units:[{size:'59㎡',price:'51.7천만원',count:1},{size:'84㎡',price:'59.4천만원',count:3}] },
-            { name: '센트레빌 아스테리움 시그니처', address:'서울 은평구 갈현로7길 25', heating:'개별난방',units:[{size:'46㎡',price:'25.5천만원',count:2},{size:'59㎡',price:'32.6천만원',count:4}]},
-            { name: '가현 월디움 면목 1차', address: '서울 중랑구 겸재로42길 24',           heating:'개별난방',units:[{size:'48㎡',price:'21.8천만원',count:2}] },
-            { name: '힐스테이트 관악센트씨엘', address:'서울 관악구 구암5길 28',     heating:'개별난방',units:[{size:'58㎡',price:'35.6천만원',count:12}]}
+        // 전체 공급 데이터
+        const allHousingData = [
+            // 신규 공급
+            { name: '이문 아이파크 자이', address: '서울 동대문구 이문동 149-8', units: [{ type: '청년 30㎡', deposit: 6912, rent: 27.7 }, { type: '청년 33㎡', deposit: 7560, rent: 30.2 }] },
+            { name: '청석 행복주택', address: '서울 동작구 상도동 252-1', units: [{ type: '대학생 18㎡', deposit: 6324, rent: 24.3 }, { type: '대학생 20㎡', deposit: 6936, rent: 26.6 }, { type: '청년 23㎡', deposit: 8424, rent: 32.3 }, { type: '청년 28㎡', deposit: 10152, rent: 39.0 }] },
+            { name: '리버센 SK뷰 롯데캐슬', address: '서울 중랑구 중화동 331-1', units: [{ type: '신혼부부 39㎡', deposit: 10080, rent: 37.7 }] },
+            // 재공급
+            { name: '삼성동센트럴아이파크', address: '서울 강남구 삼성동 22', units: [{ type: '신혼부부 49㎡', deposit: 18400, rent: 72.1 }] },
+            { name: '래미안개포루체하임', address: '서울 강남구 개포동 264', units: [{ type: '신혼부부 49㎡', deposit: 18080, rent: 71.0 }] },
+            { name: '디에이치자이 개포', address: '서울 강남구 일원동 611-1', units: [{ type: '신혼부부 44㎡', deposit: 16400, rent: 64.1 }] },
+            { name: '대치르엘', address: '서울 강남구 대치동 963', units: [{ type: '고령자 43㎡', deposit: 15124, rent: 59.2 }] },
+            { name: '래미안라클래시', address: '서울 강남구 삼성동 170-2', units: [{ type: '신혼부부 59㎡', deposit: 23040, rent: 90.3 }] },
+            { name: '디에이치퍼스티어아이파크', address: '서울 강남구 개포동 660-1', units: [{ type: '신혼부부 59㎡', deposit: 20880, rent: 81.9 }] },
+            { name: '강일리버파크 11단지', address: '서울 강동구 강일동 680', units: [{ type: '청년 29㎡', deposit: 5976, rent: 22.9 }, { type: '고령자 29㎡', deposit: 6308, rent: 24.2 }] },
+            { name: '강동 리엔파크 11단지', address: '서울 강동구 상일동 529', units: [{ type: '고령자 29㎡', deposit: 8664, rent: 33.2 }] },
+            { name: '고덕센트럴푸르지오', address: '서울 강동구 고덕동 210-1', units: [{ type: '신혼부부 40㎡', deposit: 10480, rent: 40.3 }] },
+            { name: '푸르내(서울리츠1호)', address: '서울 강동구 천호동 447-17', units: [{ type: '청년 28㎡', deposit: 7620, rent: 24.8 }] },
+            { name: '꿈의숲 효성해링턴플레이스', address: '서울 강북구 미아동 3-111', units: [{ type: '신혼부부 49㎡', deposit: 10000, rent: 40.9 }] },
+            { name: '가양동 1457-1 모듈러 행복주택', address: '서울 강서구 가양동 1457-1', units: [{ type: '청년 16㎡', deposit: 3672, rent: 14.7 }] },
+            { name: '신마곡 벽산블루밍', address: '서울 강서구 방화동 849', units: [{ type: '고령자 49㎡', deposit: 12084, rent: 42.3 }, { type: '신혼부부 59㎡', deposit: 15280, rent: 53.5 }] },
+            { name: '다온타워', address: '서울 관악구 신림동 1420-6', units: [{ type: '청년 29㎡', deposit: 5904, rent: 22.8 }] },
+            { name: '엘리시아1차', address: '서울 광진구 화양동 94-13', units: [{ type: '대학생 12㎡', deposit: 3536, rent: 12.0 }] },
+            { name: '위너스힐', address: '서울 광진구 화양동 111-89', units: [{ type: '대학생 25㎡', deposit: 7276, rent: 25.0 }] },
+            { name: '천왕이펜하우스 7단지', address: '서울 구로구 천왕동 100', units: [{ type: '청년 29㎡', deposit: 4464, rent: 16.8 }] },
+            { name: '천왕연지마을 1단지', address: '서울 구로구 천왕동 20-1', units: [{ type: '주거급여수급자 20㎡', deposit: 2700, rent: 11.0 }] },
+            { name: '천왕연지마을 2단지', address: '서울 구로구 천왕동 14', units: [{ type: '주거급여수급자 19㎡', deposit: 2580, rent: 10.6 }, { type: '고령자 31㎡', deposit: 5092, rent: 20.8 }] },
+            { name: '천왕이펜하우스 8단지', address: '서울 구로구 천왕동 10', units: [{ type: '주거급여수급자 29㎡', deposit: 4200, rent: 15.8 }, { type: '고령자 36㎡', deposit: 6688, rent: 25.1 }, { type: '신혼부부 45㎡', deposit: 8720, rent: 32.7 }] },
+            { name: '고척리본타운', address: '서울 구로구 고척동 156', units: [{ type: '신혼부부 45㎡', deposit: 8880, rent: 36.2 }] },
+            { name: '숲에리움', address: '서울 구로구 오류동 34-15', units: [{ type: '고령자 20㎡', deposit: 6612, rent: 27.0 }] },
+            { name: '수락리버타운', address: '서울 노원구 상계동 1275', units: [{ type: '고령자 21㎡', deposit: 3800, rent: 14.9 }] },
+            { name: '포레나노원', address: '서울 노원구 상계동 95-3', units: [{ type: '신혼부부 49㎡', deposit: 10960, rent: 43.0 }] },
+            { name: '초행지붕-창동', address: '서울 도봉구 창동 659-33', units: [{ type: '대학생 20㎡', deposit: 3264, rent: 13.3 }] },
+            { name: '휘경해모로 프레스티지', address: '서울 동대문구 휘경동 243', units: [{ type: '청년 39㎡', deposit: 11732, rent: 43.0 }] },
+            { name: '래미안 로이파크', address: '서울 동작구 상도동 176-21', units: [{ type: '신혼부부 59㎡', deposit: 17680, rent: 64.8 }] },
+            { name: '상도동 행복주택', address: '서울 동작구 상도동 211-435', units: [{ type: '대학생 20㎡', deposit: 3998, rent: 14.8 }] },
+            { name: '공덕동 크로시티', address: '서울 마포구 공덕동 105-84', units: [{ type: '고령자 18㎡', deposit: 6764, rent: 25.9 }] },
+            { name: 'e편한세상신촌', address: '서울 서대문구 북아현동 1-954', units: [{ type: '청년 32㎡', deposit: 10735, rent: 42.0 }] },
+            { name: '홍제센트럴아이파크', address: '서울 서대문구 홍제동 156', units: [{ type: '청년 34㎡', deposit: 10044, rent: 38.2 }] },
+            { name: '북한산두산위브', address: '서울 서대문구 홍은동 450', units: [{ type: '신혼부부 40㎡', deposit: 15849, rent: 55.4 }] },
+            { name: '힐스테이트신촌', address: '서울 서대문구 북아현동 1-220', units: [{ type: '청년 37㎡', deposit: 12814, rent: 49.4 }] },
+            { name: '래미안서초에스티지S', address: '서울 서초구 서초동 1332', units: [{ type: '신혼부부 59㎡', deposit: 20560, rent: 78.9 }] },
+            { name: '신반포자이', address: '서울 서초구 잠원동 66', units: [{ type: '신혼부부 59㎡', deposit: 21920, rent: 84.0 }] },
+            { name: '래미안 신반포 리오센트', address: '서울 서초구 잠원동 52', units: [{ type: '신혼부부 48㎡', deposit: 17440, rent: 66.7 }] },
+            { name: '서초그랑자이', address: '서울 서초구 서초동 1310-4', units: [{ type: '신혼부부 59㎡', deposit: 22000, rent: 84.4 }] },
+            { name: '왕십리자이', address: '서울 성동구 하왕십리동 998', units: [{ type: '고령자 44㎡', deposit: 17974, rent: 68.5 }] },
+            { name: '정릉 하늘마루', address: '서울 성북구 정릉동 894-1', units: [{ type: '대학생 19㎡', deposit: 5372, rent: 20.6 }, { type: '청년 26㎡', deposit: 7632, rent: 29.2 }] },
+            { name: '롯데캐슬 골든힐스', address: '서울 성북구 정릉동 1000', units: [{ type: '신혼부부 59㎡', deposit: 13680, rent: 52.3 }] },
+            { name: '꿈의숲코오롱하늘채', address: '서울 성북구 장위동 189-3', units: [{ type: '고령자 32㎡', deposit: 10526, rent: 39.5 }] },
+            { name: '래미안아트리치', address: '서울 성북구 석관동 58-56', units: [{ type: '신혼부부 39㎡', deposit: 11880, rent: 45.5 }] },
+            { name: '래미안길음센터피스', address: '서울 성북구 길음동 498', units: [{ type: '청년 33㎡', deposit: 11592, rent: 43.1 }] },
+            { name: '포레카운티', address: '서울 성북구 장위동 62-1', units: [{ type: '고령자 39㎡', deposit: 13347, rent: 48.9 }] },
+            { name: '래미안장위퍼스트하이', address: '서울 성북구 장위동 173-11', units: [{ type: '신혼부부 46㎡', deposit: 14700, rent: 57.0 }] },
+            { name: '거여 리본타운', address: '서울 송파구 거여동 23-10', units: [{ type: '청년 29㎡', deposit: 4680, rent: 16.0 }, { type: '고령자 36㎡', deposit: 5928, rent: 20.3 }] },
+            { name: '송파파크데일 3단지', address: '서울 송파구 마천동 1', units: [{ type: '청년 21㎡', deposit: 5904, rent: 20.7 }, { type: '고령자 31㎡', deposit: 9044, rent: 31.7 }] },
+            { name: '송파헬리오시티', address: '서울 송파구 가락동 479', units: [{ type: '청년 39㎡', deposit: 12312, rent: 43.1 }, { type: '신혼부부 39㎡', deposit: 13680, rent: 47.9 }, { type: '신혼부부 49㎡', deposit: 16720, rent: 58.6 }] },
+            { name: 'e편한세상 송파파크센트럴', address: '서울 송파구 거여동 234', units: [{ type: '신혼부부 45㎡', deposit: 14320, rent: 50.2 }, { type: '청년 34㎡', deposit: 12060, rent: 42.2 }] },
+            { name: '송파시그니처롯데캐슬', address: '서울 송파구 거여동 181', units: [{ type: '고령자 39㎡', deposit: 11856, rent: 41.6 }, { type: '신혼부부 41㎡', deposit: 13120, rent: 46.0 }, { type: '신혼부부 39㎡', deposit: 14376, rent: 49.1 }] },
+            { name: '솔리스타', address: '서울 양천구 목동 793-6', units: [{ type: '대학생 29㎡', deposit: 5780, rent: 23.1 }] },
+            { name: '신목동비바힐스', address: '서울 양천구 신정동 1152-12', units: [{ type: '신혼부부 58㎡', deposit: 12880, rent: 51.6 }] },
+            { name: '목동센트럴아이파크위브', address: '서울 양천구 신정동 1175-28', units: [{ type: '청년 34㎡', deposit: 9382, rent: 30.5 }] },
+            { name: '이든채', address: '서울 양천구 신정동 120-101', units: [{ type: '청년 31㎡', deposit: 6192, rent: 23.3 }, { type: '신혼부부 44㎡', deposit: 9720, rent: 36.5 }] },
+            { name: '당산센트럴아이파크', address: '서울 영등포구 당산동5가 4-2', units: [{ type: '신혼부부 46㎡', deposit: 13520, rent: 50.6 }] },
+            { name: '아크로타워스퀘어', address: '서울 영등포구 영등포동7가 145-8', units: [{ type: '청년 26㎡', deposit: 9288, rent: 34.8 }] },
+            { name: '신길센트럴아이파크', address: '서울 영등포구 신길동 347-100', units: [{ type: '청년 39㎡', deposit: 14580, rent: 53.7 }, { type: '신혼부부 49㎡', deposit: 20280, rent: 73.3 }] },
+            { name: '용산롯데캐슬센터포레', address: '서울 용산구 효창동 13', units: [{ type: '청년 38㎡', deposit: 15687, rent: 58.7 }] },
+            { name: '용산센트럴파크 헤링턴스퀘어', address: '서울 용산구 한강로3가 63-70', units: [{ type: '신혼부부 40㎡', deposit: 21360, rent: 87.2 }] },
+            { name: '힐스테이트녹번', address: '서울 은평구 녹번동 53', units: [{ type: '고령자 39㎡', deposit: 12578, rent: 48.2 }, { type: '신혼부부 40㎡', deposit: 13560, rent: 52.0 }] },
+            { name: '래미안베라힐즈', address: '서울 은평구 녹번동 19', units: [{ type: '고령자 38㎡', deposit: 14744, rent: 54.7 }] },
+            { name: '백련산SK VIEW IPARK', address: '서울 은평구 응암동 419', units: [{ type: '고령자 36㎡', deposit: 9956, rent: 38.2 }, { type: '신혼부부 40㎡', deposit: 11840, rent: 45.4 }] },
+            { name: 'DMC롯데캐슬더퍼스트', address: '서울 은평구 수색동 115-5', units: [{ type: '고령자 39㎡', deposit: 12887, rent: 46.7 }, { type: '신혼부부 49㎡', deposit: 16968, rent: 59.7 }] },
+            { name: '녹번역이편한세상캐슬', address: '서울 은평구 응암동 36', units: [{ type: '신혼부부 39㎡', deposit: 14520, rent: 52.9 }] },
+            { name: '힐스테이트녹번역', address: '서울 은평구 응암동 8-100', units: [{ type: '고령자 39㎡', deposit: 11713, rent: 40.9 }] },
+            { name: 'DMC센트럴자이', address: '서울 은평구 증산동 213-20', units: [{ type: '신혼부부 40㎡', deposit: 9666, rent: 35.4 }] },
+            { name: '이룸채(서울리츠1호)', address: '서울 은평구 불광동 323-23', units: [{ type: '청년 23㎡', deposit: 4140, rent: 15.8 }] },
+            { name: '경희궁자이', address: '서울 종로구 교남동 62-1', units: [{ type: '신혼부부 39㎡', deposit: 14720, rent: 57.7 }] },
+            { name: '신내 글로리움', address: '서울 중랑구 신내동 381-1', units: [{ type: '청년 36㎡', deposit: 6768, rent: 25.9 }] },
+            { name: '신내3-4 도시형생활주택', address: '서울 중랑구 신내동 646', units: [{ type: '청년 31㎡', deposit: 5328, rent: 21.7 }, { type: '고령자 31㎡', deposit: 5624, rent: 23.0 }] }
         ];
 
-        const geocoder = new kakao.maps.services.Geocoder();
-        let currentInfo = null;
+        // ✅ 신혼부부 공급 물량이 있는 단지만 필터링
+        const newlywedHousingData = allHousingData.filter(data => 
+            data.units.some(unit => unit.type.includes('신혼부부'))
+        );
 
-        complexes.forEach(c => {
-          geocoder.addressSearch(c.address, (results, status) => {
+        // 필터링된 데이터로 마커와 정보창을 생성합니다.
+        newlywedHousingData.forEach(data => {
+          geocoder.addressSearch(data.address, (results, status) => {
             if (status === kakao.maps.services.Status.OK) {
-              const { x, y } = results[0];
-              const pos = new kakao.maps.LatLng(y, x);
-              const marker = new kakao.maps.Marker({ map, position: pos });
+              const coords = new kakao.maps.LatLng(results[0].y, results[0].x);
+              const marker = new kakao.maps.Marker({ map: map, position: coords, title: data.name });
 
-              const content = `
-                <div class="info-window">
-                  <strong>${c.name}</strong><br>
-                  ${c.address}<br>
-                  ${c.moveIn ? `입주예정: ${c.moveIn}<br>` : ''}
-                  난방: ${c.heating}<br>
-                  ${c.units.map(u => `${toPyeong(u.size)}평 · ${toEok(u.price)}억원 · ${u.count}세대`).join('<br>')}
-                </div>
-              `;
-              const infoWin = new kakao.maps.InfoWindow({ content, removable: true }); // removable 옵션 추가
+              // ✅ 정보창에 표시될 내용에서 신혼부부 유형만 필터링
+              const newlywedUnits = data.units.filter(unit => unit.type.includes('신혼부부'));
+
+              let content = `<div class="info-window">
+                               <div class="title">${data.name}</div>
+                               <div class="address">${data.address}</div>`;
               
+              newlywedUnits.forEach(unit => {
+                content += `<div class="unit">
+                              <strong>${unit.type}</strong><br>
+                              보증금: ${unit.deposit.toLocaleString()}만원 / 월세: ${unit.rent.toLocaleString()}만원
+                            </div>`;
+              });
+              content += `</div>`;
+
+              const infoWindow = new kakao.maps.InfoWindow({ content: content, removable: true });
+
               kakao.maps.event.addListener(marker, 'click', () => {
-                if (currentInfo) currentInfo.close();
-                infoWin.open(map, marker);
-                currentInfo = infoWin;
+                if (currentInfoWindow) currentInfoWindow.close();
+                infoWindow.open(map, marker);
+                currentInfoWindow = infoWindow;
+                map.panTo(coords);
               });
             } else {
-              console.warn('주소 검색 실패: ' + c.address);
+              console.warn(`주소 검색 실패: ${data.address}`);
             }
           });
         });
 
-        // 지도 클릭 시 열려있는 정보창 닫기
+        // 지도 클릭 시 열려있는 정보창을 닫습니다.
         kakao.maps.event.addListener(map, 'click', function() {
-            if (currentInfo) {
-                currentInfo.close();
-                currentInfo = null;
+            if (currentInfoWindow) {
+                currentInfoWindow.close();
+                currentInfoWindow = null;
             }
         });
       });
