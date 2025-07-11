@@ -294,12 +294,14 @@
         // 카카오맵 초기화 함수
         function initKakaoMap() {
             // 카카오맵 API 체크
-            if (typeof kakao === 'undefined') {
+            if (typeof kakao === 'undefined' || !kakao.maps) {
+                console.error('카카오맵 API가 로드되지 않았습니다.');
                 showErrorMessage();
                 return;
             }
 
             try {
+                console.log('카카오맵 초기화 시작...');
                 const mapContainer = document.getElementById('map');
                 const mapOption = {
                     center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 중심
@@ -307,6 +309,7 @@
                 };
 
                 const map = new kakao.maps.Map(mapContainer, mapOption);
+                console.log('카카오맵 생성 완료');
                 
                 // 마커 생성
                 createMarkers(map);
@@ -318,71 +321,76 @@
         }
 
         function createMarkers(map) {
+            console.log('마커 생성 시작...');
             const markers = [];
             const overlays = [];
 
             housingData.forEach((item, index) => {
                 const coords = districtCoords[item.district];
                 if (coords) {
-                    // 가격에 따른 마커 색상 결정
-                    let markerColor = '#27ae60'; // 기본 녹색
-                    if (item.deposit >= 200000) {
-                        markerColor = '#e74c3c'; // 빨간색
-                    } else if (item.deposit >= 150000) {
-                        markerColor = '#f39c12'; // 주황색
+                    try {
+                        // 가격에 따른 마커 색상 결정
+                        let markerColor = '#27ae60'; // 기본 녹색
+                        if (item.deposit >= 200000) {
+                            markerColor = '#e74c3c'; // 빨간색
+                        } else if (item.deposit >= 150000) {
+                            markerColor = '#f39c12'; // 주황색
+                        }
+
+                        // 같은 구에 여러 단지가 있을 경우 위치 조정
+                        const offset = (index % 5) * 0.005;
+                        const offsetY = Math.floor(index / 5) * 0.005;
+                        const position = new kakao.maps.LatLng(coords[0] + offset, coords[1] + offsetY);
+
+                        // 커스텀 마커 생성
+                        const markerElement = document.createElement('div');
+                        markerElement.className = 'custom-marker';
+                        markerElement.style.backgroundColor = markerColor;
+                        markerElement.innerHTML = '🏠';
+
+                        const customOverlay = new kakao.maps.CustomOverlay({
+                            position: position,
+                            content: markerElement,
+                            yAnchor: 1
+                        });
+
+                        customOverlay.setMap(map);
+
+                        // 정보 오버레이 생성
+                        const infoContent = `
+                            <div class="marker-overlay">
+                                <div class="marker-title">${item.complex}</div>
+                                <div class="marker-detail">📍 ${item.district} | ${item.areaType}</div>
+                                <div class="marker-detail marker-price">💰 보증금: ${(item.deposit/10000).toFixed(0)}만원</div>
+                                <div class="marker-detail marker-price">🏠 월세: ${(item.monthlyRent/10000).toFixed(0)}만원</div>
+                                <div class="marker-detail marker-area">📐 주거전용: ${item.exclusiveArea}㎡ (${item.pyeong}평)</div>
+                            </div>
+                        `;
+
+                        const infoOverlay = new kakao.maps.CustomOverlay({
+                            content: infoContent,
+                            position: position,
+                            yAnchor: 1.8,
+                            xAnchor: 0.5
+                        });
+
+                        // 마커 클릭 이벤트
+                        markerElement.addEventListener('click', function() {
+                            // 모든 정보 오버레이 숨기기
+                            overlays.forEach(overlay => overlay.setMap(null));
+                            
+                            // 클릭한 마커의 정보 오버레이 표시
+                            infoOverlay.setMap(map);
+                            
+                            // 해당 위치로 지도 이동
+                            map.panTo(position);
+                        });
+
+                        markers.push(customOverlay);
+                        overlays.push(infoOverlay);
+                    } catch (error) {
+                        console.error(`마커 생성 오류 (${item.complex}):`, error);
                     }
-
-                    // 같은 구에 여러 단지가 있을 경우 위치 조정
-                    const offset = (index % 5) * 0.005;
-                    const offsetY = Math.floor(index / 5) * 0.005;
-                    const position = new kakao.maps.LatLng(coords[0] + offset, coords[1] + offsetY);
-
-                    // 커스텀 마커 생성
-                    const markerElement = document.createElement('div');
-                    markerElement.className = 'custom-marker';
-                    markerElement.style.backgroundColor = markerColor;
-                    markerElement.innerHTML = '🏠';
-
-                    const customOverlay = new kakao.maps.CustomOverlay({
-                        position: position,
-                        content: markerElement,
-                        yAnchor: 1
-                    });
-
-                    customOverlay.setMap(map);
-
-                    // 정보 오버레이 생성
-                    const infoContent = `
-                        <div class="marker-overlay">
-                            <div class="marker-title">${item.complex}</div>
-                            <div class="marker-detail">📍 ${item.district} | ${item.areaType}</div>
-                            <div class="marker-detail marker-price">💰 보증금: ${(item.deposit/10000).toFixed(0)}만원</div>
-                            <div class="marker-detail marker-price">🏠 월세: ${(item.monthlyRent/10000).toFixed(0)}만원</div>
-                            <div class="marker-detail marker-area">📐 주거전용: ${item.exclusiveArea}㎡ (${item.pyeong}평)</div>
-                        </div>
-                    `;
-
-                    const infoOverlay = new kakao.maps.CustomOverlay({
-                        content: infoContent,
-                        position: position,
-                        yAnchor: 1.8,
-                        xAnchor: 0.5
-                    });
-
-                    // 마커 클릭 이벤트
-                    markerElement.addEventListener('click', function() {
-                        // 모든 정보 오버레이 숨기기
-                        overlays.forEach(overlay => overlay.setMap(null));
-                        
-                        // 클릭한 마커의 정보 오버레이 표시
-                        infoOverlay.setMap(map);
-                        
-                        // 해당 위치로 지도 이동
-                        map.panTo(position);
-                    });
-
-                    markers.push(customOverlay);
-                    overlays.push(infoOverlay);
                 }
             });
 
@@ -390,6 +398,8 @@
             kakao.maps.event.addListener(map, 'click', function() {
                 overlays.forEach(overlay => overlay.setMap(null));
             });
+
+            console.log(`총 ${markers.length}개 마커 생성 완료`);
         }
 
         function showErrorMessage() {
@@ -424,19 +434,24 @@
 
         // 페이지 로드 완료 후 카카오맵 초기화
         window.addEventListener('load', function() {
-            // 카카오맵 API 스크립트 동적 로드
-            if (typeof kakao === 'undefined') {
+            // 카카오맵 API가 이미 로드되어 있는지 확인
+            if (typeof kakao !== 'undefined' && kakao.maps) {
+                initKakaoMap();
+            } else {
+                // 카카오맵 API 스크립트 동적 로드
                 const script = document.createElement('script');
                 script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=746a56de7e982f3f195ec96c7ade2b76&autoload=false';
                 script.onload = function() {
-                    kakao.maps.load(initKakaoMap);
+                    if (typeof kakao !== 'undefined' && kakao.maps) {
+                        kakao.maps.load(initKakaoMap);
+                    } else {
+                        showErrorMessage();
+                    }
                 };
                 script.onerror = function() {
                     showErrorMessage();
                 };
                 document.head.appendChild(script);
-            } else {
-                kakao.maps.load(initKakaoMap);
             }
         });
     </script>
