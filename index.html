@@ -81,66 +81,73 @@
     </div>
 
     <script>
-        const housingData = [
-            // 데이터는 원본과 동일하게 유지
-            {district: '강남구', complex: '삼성동센트럴아이파크', areaType: '49㎡', deposit: 184000, monthlyRent: 721000, exclusiveArea: 49.94, pyeong: 15.1},
-            {district: '강남구', complex: '래미안개포루체하임', areaType: '49㎡', deposit: 180800, monthlyRent: 710000, exclusiveArea: 49.99, pyeong: 15.1},
-            {district: '강남구', complex: '디에이치자이 개포', areaType: '44㎡', deposit: 164000, monthlyRent: 641000, exclusiveArea: 44.84, pyeong: 13.6},
-            {district: '강남구', complex: '래미안라클래시', areaType: '59㎡', deposit: 230400, monthlyRent: 903000, exclusiveArea: 59.99, pyeong: 18.2},
-            {district: '강남구', complex: '디에이치퍼스티어아이파크', areaType: '59㎡', deposit: 208800, monthlyRent: 819000, exclusiveArea: 59.97, pyeong: 18.2},
-            {district: '강동구', complex: '고덕센트럴푸르지오', areaType: '40㎡', deposit: 104800, monthlyRent: 403000, exclusiveArea: 40.92, pyeong: 12.4},
-            {district: '강북구', complex: '꿈의숲 효성해링턴플레이스', areaType: '49㎡', deposit: 100000, monthlyRent: 409000, exclusiveArea: 49.48, pyeong: 15.0},
-            {district: '구로구', complex: '고척리본타운', areaType: '45㎡', deposit: 88800, monthlyRent: 362000, exclusiveArea: 45.09, pyeong: 13.7},
-            {district: '노원구', complex: '포레나노원', areaType: '49㎡', deposit: 109600, monthlyRent: 430000, exclusiveArea: 49.96, pyeong: 15.1},
-            {district: '동작구', complex: '래미안 로이파크', areaType: '59㎡', deposit: 176800, monthlyRent: 648000, exclusiveArea: 59.98, pyeong: 18.2},
-            {district: '서대문구', complex: '북한산두산위브', areaType: '40㎡', deposit: 158490, monthlyRent: 554000, exclusiveArea: 40.07, pyeong: 12.1},
-            {district: '서초구', complex: '래미안서초에스티지S', areaType: '59㎡', deposit: 205600, monthlyRent: 789000, exclusiveArea: 59.36, pyeong: 18.0},
-            {district: '서초구', complex: '신반포자이', areaType: '59㎡', deposit: 219200, monthlyRent: 840000, exclusiveArea: 59.93, pyeong: 18.2},
-            {district: '서초구', complex: '래미안 신반포 리오센트', areaType: '48㎡', deposit: 174400, monthlyRent: 667000, exclusiveArea: 48.48, pyeong: 14.7},
-            {district: '서초구', complex: '서초그랑자이', areaType: '59㎡', deposit: 220000, monthlyRent: 844000, exclusiveArea: 59.98, pyeong: 18.2},
-            {district: '성북구', complex: '롯데캐슬 골든힐스', areaType: '59㎡', deposit: 136800, monthlyRent: 523000, exclusiveArea: 59.93, pyeong: 18.2},
-            {district: '성북구', complex: '래미안아트리치', areaType: '39㎡', deposit: 118800, monthlyRent: 455000, exclusiveArea: 39.01, pyeong: 11.8},
-            {district: '성북구', complex: '래미안장위퍼스트하이', areaType: '46㎡', deposit: 147000, monthlyRent: 570000, exclusiveArea: 46.35, pyeong: 14.0},
-            {district: '송파구', complex: 'e편한세상 송파파크센트럴', areaType: '45㎡', deposit: 143200, monthlyRent: 502000, exclusiveArea: 45.07, pyeong: 13.7},
-            {district: '송파구', complex: '송파시그니처롯데캐슬', areaType: '39㎡', deposit: 143760, monthlyRent: 491000, exclusiveArea: 39.9, pyeong: 12.1},
-            {district: '양천구', complex: '신목동비바힐스', areaType: '58㎡', deposit: 128800, monthlyRent: 516000, exclusiveArea: 58.9, pyeong: 17.8},
-            {district: '영등포구', complex: '당산센트럴아이파크', areaType: '46㎡', deposit: 135200, monthlyRent: 506000, exclusiveArea: 46.98, pyeong: 14.2},
-            {district: '용산구', complex: '용산센트럴파크 해링턴스퀘어', areaType: '40㎡', deposit: 213600, monthlyRent: 872000, exclusiveArea: 40.67, pyeong: 12.3},
-            {district: '은평구', complex: '녹번역이편한세상캐슬', areaType: '39㎡', deposit: 145200, monthlyRent: 529000, exclusiveArea: 39.95, pyeong: 12.1},
-            {district: '은평구', complex: 'DMC센트럴자이', areaType: '40㎡', deposit: 96660, monthlyRent: 354000, exclusiveArea: 40.21, pyeong: 12.2},
-            {district: '종로구', complex: '경희궁자이', areaType: '39㎡', deposit: 147200, monthlyRent: 577000, exclusiveArea: 39.06, pyeong: 11.8}
-        ];
+    const housingData = [
+        // 데이터는 생략...
+        {district: '강남구', complex: '삼성동센트럴아이파크', areaType: '49㎡', deposit: 184000, monthlyRent: 721000, exclusiveArea: 49.94, pyeong: 15.1},
+        {district: '강남구', complex: '래미안개포루체하임', areaType: '49㎡', deposit: 180800, monthlyRent: 710000, exclusiveArea: 49.99, pyeong: 15.1},
+        {district: '강남구', complex: '디에이치자이 개포', areaType: '44㎡', deposit: 164000, monthlyRent: 641000, exclusiveArea: 44.84, pyeong: 13.6},
+        {district: '강남구', complex: '래미안라클래시', areaType: '59㎡', deposit: 230400, monthlyRent: 903000, exclusiveArea: 59.99, pyeong: 18.2},
+        {district: '강남구', complex: '디에이치퍼스티어아이파크', areaType: '59㎡', deposit: 208800, monthlyRent: 819000, exclusiveArea: 59.97, pyeong: 18.2},
+        {district: '강동구', complex: '고덕센트럴푸르지오', areaType: '40㎡', deposit: 104800, monthlyRent: 403000, exclusiveArea: 40.92, pyeong: 12.4},
+        {district: '강북구', complex: '꿈의숲 효성해링턴플레이스', areaType: '49㎡', deposit: 100000, monthlyRent: 409000, exclusiveArea: 49.48, pyeong: 15.0},
+        {district: '구로구', complex: '고척리본타운', areaType: '45㎡', deposit: 88800, monthlyRent: 362000, exclusiveArea: 45.09, pyeong: 13.7},
+        {district: '노원구', complex: '포레나노원', areaType: '49㎡', deposit: 109600, monthlyRent: 430000, exclusiveArea: 49.96, pyeong: 15.1},
+        {district: '동작구', complex: '래미안 로이파크', areaType: '59㎡', deposit: 176800, monthlyRent: 648000, exclusiveArea: 59.98, pyeong: 18.2},
+        {district: '서대문구', complex: '북한산두산위브', areaType: '40㎡', deposit: 158490, monthlyRent: 554000, exclusiveArea: 40.07, pyeong: 12.1},
+        {district: '서초구', complex: '래미안서초에스티지S', areaType: '59㎡', deposit: 205600, monthlyRent: 789000, exclusiveArea: 59.36, pyeong: 18.0},
+        {district: '서초구', complex: '신반포자이', areaType: '59㎡', deposit: 219200, monthlyRent: 840000, exclusiveArea: 59.93, pyeong: 18.2},
+        {district: '서초구', complex: '래미안 신반포 리오센트', areaType: '48㎡', deposit: 174400, monthlyRent: 667000, exclusiveArea: 48.48, pyeong: 14.7},
+        {district: '서초구', complex: '서초그랑자이', areaType: '59㎡', deposit: 220000, monthlyRent: 844000, exclusiveArea: 59.98, pyeong: 18.2},
+        {district: '성북구', complex: '롯데캐슬 골든힐스', areaType: '59㎡', deposit: 136800, monthlyRent: 523000, exclusiveArea: 59.93, pyeong: 18.2},
+        {district: '성북구', complex: '래미안아트리치', areaType: '39㎡', deposit: 118800, monthlyRent: 455000, exclusiveArea: 39.01, pyeong: 11.8},
+        {district: '성북구', complex: '래미안장위퍼스트하이', areaType: '46㎡', deposit: 147000, monthlyRent: 570000, exclusiveArea: 46.35, pyeong: 14.0},
+        {district: '송파구', complex: 'e편한세상 송파파크센트럴', areaType: '45㎡', deposit: 143200, monthlyRent: 502000, exclusiveArea: 45.07, pyeong: 13.7},
+        {district: '송파구', complex: '송파시그니처롯데캐슬', areaType: '39㎡', deposit: 143760, monthlyRent: 491000, exclusiveArea: 39.9, pyeong: 12.1},
+        {district: '양천구', complex: '신목동비바힐스', areaType: '58㎡', deposit: 128800, monthlyRent: 516000, exclusiveArea: 58.9, pyeong: 17.8},
+        {district: '영등포구', complex: '당산센트럴아이파크', areaType: '46㎡', deposit: 135200, monthlyRent: 506000, exclusiveArea: 46.98, pyeong: 14.2},
+        {district: '용산구', complex: '용산센트럴파크 헤링턴스퀘어', areaType: '40㎡', deposit: 213600, monthlyRent: 872000, exclusiveArea: 40.67, pyeong: 12.3},
+        {district: '은평구', complex: '녹번역이편한세상캐슬', areaType: '39㎡', deposit: 145200, monthlyRent: 529000, exclusiveArea: 39.95, pyeong: 12.1},
+        {district: '은평구', complex: 'DMC센트럴자이', areaType: '40㎡', deposit: 96660, monthlyRent: 354000, exclusiveArea: 40.21, pyeong: 12.2},
+        {district: '종로구', complex: '경희궁자이', areaType: '39㎡', deposit: 147200, monthlyRent: 577000, exclusiveArea: 39.06, pyeong: 11.8}
+    ];
 
-        // 1. 안정적인 API 로딩 및 실행
+    window.addEventListener('load', function () {
+        // 통계 계산 및 표시
+        const totalCount = housingData.length;
+        const avgDeposit = housingData.reduce((sum, item) => sum + item.deposit, 0) / totalCount;
+        const avgRent = housingData.reduce((sum, item) => sum + item.monthlyRent, 0) / totalCount;
+        const avgPyeong = housingData.reduce((sum, item) => sum + item.pyeong, 0) / totalCount;
+
+        document.getElementById('totalCount').textContent = totalCount;
+        document.getElementById('avgDeposit').textContent = (avgDeposit / 10000).toFixed(0) + '만원';
+        document.getElementById('avgRent').textContent = (avgRent / 10000).toFixed(0) + '만원';
+        document.getElementById('avgArea').textContent = avgPyeong.toFixed(1) + '평';
+
+        // 카카오맵 API 로딩 및 초기화
         kakao.maps.load(function() {
             const mapContainer = document.getElementById('map');
             const mapOption = {
-                center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 중심
+                center: new kakao.maps.LatLng(37.5665, 126.9780),
                 level: 8
             };
             const map = new kakao.maps.Map(mapContainer, mapOption);
-
-            // 2. 주소-좌표 변환 객체 생성
             const geocoder = new kakao.maps.services.Geocoder();
-            let currentInfoWindow = null; // 현재 열려있는 정보창을 저장할 변수
+            let currentInfoWindow = null;
 
             housingData.forEach(item => {
-                // 3. 주소로 좌표를 검색 (구 이름 + 단지 이름으로 검색 정확도 향상)
                 geocoder.addressSearch(`서울 ${item.district} ${item.complex}`, function(result, status) {
                     if (status === kakao.maps.services.Status.OK) {
                         const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-                        // 마커 이미지 결정 (가격 기준)
-                        let imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_0.png'; // 기본
+                        let imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_green.png';
                         if (item.deposit >= 200000) {
-                            imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'; // 고가
+                            imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
                         } else if (item.deposit >= 150000) {
-                             imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_yellow.png'; // 중가
+                             imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_yellow.png';
                         }
-                        const imageSize = new kakao.maps.Size(36, 37);
+                        const imageSize = new kakao.maps.Size(31, 35);
                         const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
-                        // 4. 표준 마커 생성
                         const marker = new kakao.maps.Marker({
                             map: map,
                             position: coords,
@@ -148,7 +155,6 @@
                             title: item.complex
                         });
 
-                        // 정보창에 들어갈 내용
                         const content = `
                             <div class="info-window-content">
                                 <div class="title">${item.complex}</div>
@@ -160,18 +166,16 @@
 
                         const infoWindow = new kakao.maps.InfoWindow({
                             content: content,
-                            removable: true // 닫기 버튼 표시
+                            removable: true
                         });
 
-                        // 5. 마커에 클릭 이벤트 등록
                         kakao.maps.event.addListener(marker, 'click', function() {
-                            // 다른 정보창이 열려있으면 닫기
                             if (currentInfoWindow) {
                                 currentInfoWindow.close();
                             }
                             infoWindow.open(map, marker);
                             currentInfoWindow = infoWindow;
-                            map.panTo(coords); // 부드럽게 지도를 중심으로 이동
+                            map.panTo(coords);
                         });
                     } else {
                         console.warn(`주소 검색 실패: ${item.district} ${item.complex}`);
@@ -179,7 +183,6 @@
                 });
             });
 
-            // 지도 클릭 시 정보창 닫기
             kakao.maps.event.addListener(map, 'click', function() {
                 if (currentInfoWindow) {
                     currentInfoWindow.close();
@@ -187,17 +190,7 @@
                 }
             });
         });
-
-        // 통계 계산 및 표시
-        const totalCount = housingData.length;
-        const avgDeposit = housingData.reduce((sum, item) => sum + item.deposit, 0) / totalCount;
-        const avgRent = housingData.reduce((sum, item) => sum + item.monthlyRent, 0) / totalCount;
-        const avgPyeong = housingData.reduce((sum, item) => sum + item.pyeong, 0) / totalCount;
-
-        document.getElementById('totalCount').textContent = totalCount;
-        document.getElementById('avgDeposit').textContent = (avgDeposit / 10000).toFixed(0) + '만원';
-        document.getElementById('avgRent').textContent = (avgRent / 10000).toFixed(0) + '만원';
-        document.getElementById('avgArea').textContent = avgPyeong.toFixed(1) + '평';
-    </script>
+    });
+</script>
 </body>
 </html>
