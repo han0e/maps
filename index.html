@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>신혼부부 행복주택 지도</title>
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=746a56de7e982f3f195ec96c7ade2b76&autoload=false"></script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -434,24 +435,12 @@
 
         // 페이지 로드 완료 후 카카오맵 초기화
         window.addEventListener('load', function() {
-            // 카카오맵 API가 이미 로드되어 있는지 확인
+            // 카카오맵 API 로드 확인
             if (typeof kakao !== 'undefined' && kakao.maps) {
-                initKakaoMap();
+                kakao.maps.load(initKakaoMap);
             } else {
-                // 카카오맵 API 스크립트 동적 로드
-                const script = document.createElement('script');
-                script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=746a56de7e982f3f195ec96c7ade2b76&autoload=false';
-                script.onload = function() {
-                    if (typeof kakao !== 'undefined' && kakao.maps) {
-                        kakao.maps.load(initKakaoMap);
-                    } else {
-                        showErrorMessage();
-                    }
-                };
-                script.onerror = function() {
-                    showErrorMessage();
-                };
-                document.head.appendChild(script);
+                console.error('카카오맵 API 로드 실패');
+                showErrorMessage();
             }
         });
     </script>
