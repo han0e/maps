@@ -84,6 +84,7 @@
         function createMarkerAndInfoWindow(coords, complexData) {
             const marker = new kakao.maps.Marker({ map, position: coords });
             
+            // ✅ 정보창 내용에 우선공급 호수 추가
             const content = `
                 <div class="info-window">
                   <div class="title">${complexData.name}</div>
@@ -94,6 +95,9 @@
                       <div class="unit-info">${toPyeong(u.size)}평 (${u.size})</div>
                       <div class="price-info">
                         보증금 <strong>${toEokwon(u.price)}</strong> / 월 <strong>${u.rent.toLocaleString()}만원</strong>
+                      </div>
+                      <div class="priority-info">
+                        우선공급: ${u.priority}호
                       </div>
                     </div>
                   `).join('<hr>')}
@@ -109,7 +113,6 @@
         }
 
         complexes.forEach(c => {
-            // lat, lng 값이 없으면 주소 검색 실행
             geocoder.addressSearch(c.name, (results, status) => {
                 if (status === kakao.maps.services.Status.OK) {
                     const coords = new kakao.maps.LatLng(results[0].y, results[0].x);
