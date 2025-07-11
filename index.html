@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>서울시 장기전세주택 (신혼부부 대상) 공급지도</title>
-  
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=cc36e0ea25758cc3e8da9744bfd7e612&libraries=services&autoload=false"></script>
-  
   <style>
     html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
-    #map { width: 100%; height: 100%; }
+    #map { position: absolute; top: env(safe-area-inset-top); left: env(safe-area-inset-left);
+           right: env(safe-area-inset-right); bottom: env(safe-area-inset-bottom);
+           width: 100%; height: 100%; }
     .info-window { font-size: 14px; line-height: 1.4; padding: 8px; max-width: 250px; }
     .info-window strong { font-size: 15px; }
     @media (max-width: 600px) { .info-window { font-size: 12px; } }
@@ -17,7 +17,6 @@
 </head>
 <body>
   <div id="map"></div>
-
   <script>
     window.addEventListener('load', function() {
       kakao.maps.load(function() {
@@ -26,77 +25,100 @@
           { center: new kakao.maps.LatLng(37.5665, 126.9780), level: 9 }
         );
 
+        // --- Helper Functions ---
         function toPyeong(size) { return (parseFloat(size.replace('㎡',''))/3.3058).toFixed(1); }
         
+        // ✅ 만원 단위를 억원 단위로 변환하는 함수 추가
+        function toEokwon(manwonString) {
+          const manwon = parseFloat(manwonString.replace(/[^0-9]/g, ''));
+          if (isNaN(manwon)) return '';
+          const eokwon = manwon / 10000;
+          return eokwon.toFixed(1) + '억원';
+        }
+        
         const complexes = [
-            { name: '리버센 SK뷰 롯데캐슬', address: '서울 중랑구 중화동 331-1', moveIn: '2025.9',  heating: '개별난방', units:[{size:'39㎡', price:'10,080만원'}]},
-            { name: '삼성동센트럴아이파크', address: '서울 강남구 삼성동 22', heating: '지역난방', units:[{size:'49㎡', price:'18,400만원'}]},
-            { name: '래미안개포루체하임', address: '서울 강남구 개포동 264', heating: '지역난방', units:[{size:'49㎡', price:'18,080만원'}]},
-            { name: '디에이치자이 개포', address: '서울 강남구 일원동 611-1', heating: '지역난방', units:[{size:'44㎡', price:'16,400만원'}]},
-            { name: '래미안라클래시', address: '서울 강남구 삼성동 170-2', heating: '지역난방', units:[{size:'59㎡', price:'23,040만원'}]},
-            { name: '디에이치퍼스티어아이파크', address: '서울 강남구 개포동 660-1', heating: '지역난방', units:[{size:'59㎡', price:'20,880만원'}]},
-            { name: '고덕센트럴푸르지오', address: '서울 강동구 고덕동 210-1', heating: '개별난방', units:[{size:'40㎡', price:'10,480만원'}]},
-            { name: '꿈의숲 효성해링턴플레이스', address: '서울 강북구 미아동 3-111', heating: '개별난방', units:[{size:'49㎡', price:'10,000만원'}]},
-            { name: '신마곡 벽산블루밍', address: '서울 강서구 방화동 849', heating: '개별난방', units:[{size:'59㎡', price:'15,280만원'}]},
-            { name: '천왕이펜하우스 8단지', address: '서울 구로구 천왕동 10', heating: '개별난방', units:[{size:'45㎡', price:'8,720만원'}]},
-            { name: '고척리본타운', address: '서울 구로구 고척동 156', heating: '개별난방', units:[{size:'45㎡', price:'8,880만원'}]},
-            { name: '포레나노원', address: '서울 노원구 상계동 95-3', heating: '개별난방', units:[{size:'49㎡', price:'10,960만원'}]},
-            { name: '래미안 로이파크', address: '서울 동작구 상도동 176-21', heating: '지역난방', units:[{size:'59㎡', price:'17,680만원'}]},
-            { name: '북한산두산위브', address: '서울 서대문구 홍은동 450', heating: '개별난방', units:[{size:'40㎡', price:'15,849만원'}]},
-            { name: '래미안서초에스티지S', address: '서울 서초구 서초동 1332', heating: '지역난방', units:[{size:'59㎡', price:'20,560만원'}]},
-            { name: '신반포자이', address: '서울 서초구 잠원동 66', heating: '지역난방', units:[{size:'59㎡', price:'21,920만원'}]},
-            { name: '래미안 신반포 리오센트', address: '서울 서초구 잠원동 52', heating: '지역난방', units:[{size:'48㎡', price:'17,440만원'}]},
-            { name: '서초그랑자이', address: '서울 서초구 서초동 1310-4', heating: '지역난방', units:[{size:'59㎡', price:'22,000만원'}]},
-            { name: '롯데캐슬 골든힐스', address: '서울 성북구 정릉동 1000', heating: '개별난방', units:[{size:'59㎡', price:'13,680만원'}]},
-            { name: '래미안아트리치', address: '서울 성북구 석관동 58-56', heating: '개별난방', units:[{size:'39㎡', price:'11,880만원'}]},
-            { name: '래미안장위퍼스트하이', address: '서울 성북구 장위동 173-11', heating: '개별난방', units:[{size:'46㎡', price:'14,700만원'}]},
-            { name: '송파헬리오시티', address: '서울 송파구 가락동 479', heating: '지역난방', units:[{size:'39㎡', price:'13,680만원'}, {size:'49㎡', price:'16,720만원'}]},
-            { name: 'e편한세상 송파파크센트럴', address: '서울 송파구 거여동 234', heating: '개별난방', units:[{size:'45㎡', price:'14,320만원'}]},
-            { name: '송파시그니처롯데캐슬', address: '서울 송파구 거여동 181', heating: '개별난방', units:[{size:'41㎡', price:'13,120만원'}, {size:'39㎡', price:'14,376만원'}]},
-            { name: '신목동비바힐스', address: '서울 양천구 신정동 1152-12', heating: '개별난방', units:[{size:'58㎡', price:'12,880만원'}]},
-            { name: '이든채', address: '서울 양천구 신정동 120-101', heating: '개별난방', units:[{size:'44㎡', price:'9,720만원'}]},
-            { name: '당산센트럴아이파크', address: '서울 영등포구 당산동5가 4-2', heating: '개별난방', units:[{size:'46㎡', price:'13,520만원'}]},
-            { name: '신길센트럴아이파크', address: '서울 영등포구 신길동 347-100', heating: '개별난방', units:[{size:'49㎡', price:'20,280만원'}]},
-            { name: '용산센트럴파크 헤링턴스퀘어', address: '서울 용산구 한강로3가 63-70', heating: '지역난방', units:[{size:'40㎡', price:'21,360만원'}]},
-            { name: '힐스테이트녹번', address: '서울 은평구 녹번동 53', heating: '개별난방', units:[{size:'40㎡', price:'13,560만원'}]},
-            { name: '백련산SK VIEW IPARK', address: '서울 은평구 응암동 419', heating: '개별난방', units:[{size:'40㎡', price:'11,840만원'}]},
-            { name: 'DMC롯데캐슬더퍼스트', address: '서울 은평구 수색동 115-5', heating: '개별난방', units:[{size:'49㎡', price:'16,968만원'}]},
-            { name: '녹번역이편한세상캐슬', address: '서울 은평구 응암동 36', heating: '개별난방', units:[{size:'39㎡', price:'14,520만원'}]},
-            { name: 'DMC센트럴자이', address: '서울 은평구 증산동 213-20', heating: '개별난방', units:[{size:'40㎡', price:'9,666만원'}]},
-            { name: '경희궁자이', address: '서울 종로구 교남동 62-1', heating: '지역난방', units:[{size:'39㎡', price:'14,720만원'}]}
+            { name: '리버센 SK뷰 롯데캐슬', address: '서울 중랑구 중화동 331-1', units:[{size:'39㎡', price:'10,080만원'}]},
+            { name: '삼성동센트럴아이파크', address: '서울 강남구 삼성동 22', units:[{size:'49㎡', price:'18,400만원'}]},
+            { name: '래미안개포루체하임', address: '서울 강남구 개포동 264', units:[{size:'49㎡', price:'18,080만원'}]},
+            { name: '디에이치자이 개포', address: '서울 강남구 일원동 611-1', units:[{size:'44㎡', price:'16,400만원'}]},
+            { name: '래미안라클래시', address: '서울 강남구 삼성동 170-2', units:[{size:'59㎡', price:'23,040만원'}]},
+            { name: '디에이치퍼스티어아이파크', address: '서울 강남구 개포동 660-1', units:[{size:'59㎡', price:'20,880만원'}]},
+            { name: '고덕센트럴푸르지오', address: '서울 강동구 고덕동 210-1', units:[{size:'40㎡', price:'10,480만원'}]},
+            { name: '꿈의숲 효성해링턴플레이스', address: '서울 강북구 미아동 3-111', units:[{size:'49㎡', price:'10,000만원'}]},
+            { name: '신마곡 벽산블루밍', address: '서울 강서구 방화동 849', units:[{size:'59㎡', price:'15,280만원'}]},
+            { name: '천왕이펜하우스 8단지', address: '서울 구로구 천왕동 10', units:[{size:'45㎡', price:'8,720만원'}]},
+            { name: '고척리본타운', address: '서울 구로구 고척동 156', units:[{size:'45㎡', price:'8,880만원'}]},
+            { name: '포레나노원', address: '서울 노원구 상계동 95-3', units:[{size:'49㎡', price:'10,960만원'}]},
+            { name: '래미안 로이파크', address: '서울 동작구 상도동 176-21', units:[{size:'59㎡', price:'17,680만원'}]},
+            { name: '북한산두산위브', address: '서울 서대문구 홍은동 450', units:[{size:'40㎡', price:'15,849만원'}]},
+            { name: '래미안서초에스티지S', address: '서울 서초구 서초동 1332', units:[{size:'59㎡', price:'20,560만원'}]},
+            { name: '신반포자이', address: '서울 서초구 잠원동 66', units:[{size:'59㎡', price:'21,920만원'}]},
+            { name: '래미안 신반포 리오센트', address: '서울 서초구 잠원동 52', units:[{size:'48㎡', price:'17,440만원'}]},
+            { name: '서초그랑자이', address: '서울 서초구 서초동 1310-4', units:[{size:'59㎡', price:'22,000만원'}]},
+            { name: '롯데캐슬 골든힐스', address: '서울 성북구 정릉동 1000', units:[{size:'59㎡', price:'13,680만원'}]},
+            { name: '래미안아트리치', address: '서울 성북구 석관동 58-56', units:[{size:'39㎡', price:'11,880만원'}]},
+            { name: '래미안장위퍼스트하이', address: '서울 성북구 장위동 173-11', units:[{size:'46㎡', price:'14,700만원'}]},
+            { name: '송파헬리오시티', address: '서울 송파구 가락동 479', units:[{size:'39㎡', price:'13,680만원'}, {size:'49㎡', price:'16,720만원'}]},
+            { name: 'e편한세상 송파파크센트럴', address: '서울 송파구 거여동 234', units:[{size:'45㎡', price:'14,320만원'}]},
+            { name: '송파시그니처롯데캐슬', address: '서울 송파구 거여동 181', units:[{size:'41㎡', price:'13,120만원'}, {size:'39㎡', price:'14,376만원'}]},
+            { name: '신목동비바힐스', address: '서울 양천구 신정동 1152-12', units:[{size:'58㎡', price:'12,880만원'}]},
+            { name: '이든채', address: '서울 양천구 신정동 120-101', units:[{size:'44㎡', price:'9,720만원'}]},
+            { name: '당산센트럴아이파크', address: '서울 영등포구 당산동5가 4-2', units:[{size:'46㎡', price:'13,520만원'}]},
+            { name: '신길센트럴아이파크', address: '서울 영등포구 신길동 347-100', units:[{size:'49㎡', price:'20,280만원'}]},
+            { name: '용산센트럴파크 헤링턴스퀘어', address: '서울 용산구 한강로3가 63-70', units:[{size:'40㎡', price:'21,360만원'}]},
+            { name: '힐스테이트녹번', address: '서울 은평구 녹번동 53', units:[{size:'40㎡', price:'13,560만원'}]},
+            { name: '백련산SK VIEW IPARK', address: '서울 은평구 응암동 419', units:[{size:'40㎡', price:'11,840만원'}]},
+            { name: 'DMC롯데캐슬더퍼스트', address: '서울 은평구 수색동 115-5', units:[{size:'49㎡', price:'16,968만원'}]},
+            { name: '녹번역이편한세상캐슬', address: '서울 은평구 응암동 36', units:[{size:'39㎡', price:'14,520만원'}]},
+            { name: 'DMC센트럴자이', address: '서울 은평구 증산동 213-20', units:[{size:'40㎡', price:'9,666만원'}]},
+            { name: '경희궁자이', address: '서울 종로구 교남동 62-1', units:[{size:'39㎡', price:'14,720만원'}]}
         ];
         
         const geocoder = new kakao.maps.services.Geocoder();
         let currentInfo = null;
 
-        complexes.forEach(c => {
-          geocoder.addressSearch(c.name, (results, status) => {
-            if (status === kakao.maps.services.Status.OK) {
-              const { x, y } = results[0];
-              const pos = new kakao.maps.LatLng(y, x);
-              const marker = new kakao.maps.Marker({ map, position: pos });
+        // 마커와 정보창을 생성하는 함수 (코드 중복 방지)
+        function createMarkerAndInfoWindow(coords, complexData) {
+            const marker = new kakao.maps.Marker({ map, position: coords });
 
-              const content = `
+            const content = `
                 <div class="info-window">
-                  <strong>${c.name}</strong><br>
-                  <span style="color:#555;">${c.address}</span><br>
+                  <strong>${complexData.name}</strong><br>
+                  <span style="color:#555;">${complexData.address}</span><br>
                   <hr style="border:0; border-top:1px solid #eee; margin:5px 0;">
-                  ${c.units.map(u => `
+                  ${complexData.units.map(u => `
                     <div style="margin-top:5px;">
-                      ${toPyeong(u.size)}평(${u.size}) · <strong>${u.price}</strong>
+                      ${toPyeong(u.size)}평(${u.size}) · <strong>${toEokwon(u.price)}</strong>
                     </div>
                   `).join('')}
                 </div>
               `;
-              const infoWin = new kakao.maps.InfoWindow({ content, removable: true });
-              
-              kakao.maps.event.addListener(marker, 'click', () => {
-                if (currentInfo) currentInfo.close();
-                infoWin.open(map, marker);
-                currentInfo = infoWin;
-              });
+            const infoWin = new kakao.maps.InfoWindow({ content, removable: true });
+            
+            kakao.maps.event.addListener(marker, 'click', () => {
+              if (currentInfo) currentInfo.close();
+              infoWin.open(map, marker);
+              currentInfo = infoWin;
+            });
+        }
+
+        complexes.forEach(c => {
+          // 1. 이름으로 먼저 검색
+          geocoder.addressSearch(c.name, (results, status) => {
+            if (status === kakao.maps.services.Status.OK) {
+              const coords = new kakao.maps.LatLng(results[0].y, results[0].x);
+              createMarkerAndInfoWindow(coords, c);
             } else {
-              console.warn(`이름 검색 실패: ${c.name}`);
+              // ✅ 2. 이름 검색 실패 시 주소로 다시 검색 (Fallback)
+              console.warn(`'${c.name}' 이름 검색 실패, 주소로 재시도...`);
+              geocoder.addressSearch(c.address, (results2, status2) => {
+                  if(status2 === kakao.maps.services.Status.OK) {
+                      const coords = new kakao.maps.LatLng(results2[0].y, results2[0].x);
+                      createMarkerAndInfoWindow(coords, c);
+                  } else {
+                      console.error(`'${c.address}' 주소 검색도 최종 실패`);
+                  }
+              });
             }
           });
         });
