@@ -1,144 +1,178 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>서울시 장기전세주택 (신혼부부 대상) 공급지도</title>
-  <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=cc36e0ea25758cc3e8da9744bfd7e612&libraries=services&autoload=false"></script>
-<style>
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
-    #map { position: absolute; top: env(safe-area-inset-top); left: env(safe-area-inset-left);
-           right: env(safe-area-inset-right); bottom: env(safe-area-inset-bottom);
-           width: 100%; height: 100%; }
-    .info-window {
-      font-size: 14px;
-      line-height: 1.6;
-      padding: 10px;
-      width: 200px; /* ✅ 너비를 200px로 고정 */
-      box-sizing: border-box; /* ✅ padding을 너비 계산에 포함 */
-      word-break: break-word; 
-    }
-    .info-window .title { font-weight: bold; font-size: 16px; }
-    .info-window .address { font-size: 12px; color: #666; }
-    .info-window hr { border: 0; border-top: 1px solid #eee; margin: 8px 0; }
-    .info-window .unit-info { font-size: 13px; }
-    .info-window .price-info { font-size: 13px; }
-    .info-window strong { color: #E65A2D; }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script>
-    window.addEventListener('load', function() {
-      kakao.maps.load(function() {
-        const map = new kakao.maps.Map(
-          document.getElementById('map'),
-          { center: new kakao.maps.LatLng(37.5665, 126.9780), level: 9 }
-        );
-
-        function toPyeong(size) { return (parseFloat(size.replace('㎡',''))/3.3058).toFixed(1); }
-        function toEokwon(manwon) { return (manwon / 10000).toFixed(1) + '억원'; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>행복주택 지도</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; overflow: hidden; }
         
-// ✅ 우선/일반 공급(priority/general) 데이터 추가
-        const complexes = [
-            { name: '리버센 SK뷰 롯데캐슬', address: '중랑구 중화동 331-1', units:[{size:'39㎡', price:10080, rent:37.7, priority:4, general:4}]},
-            { name: '삼성동센트럴아이파크', address: '강남구 삼성동 188', units:[{size:'49㎡', price:18400, rent:72.1, priority:2, general:2}]},
-            { name: '래미안개포루체하임', address: '강남구 일원동 741', units:[{size:'49㎡', price:18080, rent:71.0, priority:0, general:0}]},
-            { name: '디에이치자이 개포', address: '강남구 일원동 743', units:[{size:'44㎡', price:16400, rent:64.1, priority:1, general:2}]},
-            { name: '래미안라클래시', address: '강남구 삼성동 189', units:[{size:'59㎡', price:23040, rent:90.3, priority:0, general:0}]},
-            { name: '디에이치퍼스티어아이파크', address: '강남구 개포동 660-4', units:[{size:'59㎡', price:20880, rent:81.9, priority:1, general:2}]},
-            { name: '고덕센트럴푸르지오', address: '강동구 고덕동 210-1', units:[{size:'40㎡', price:10480, rent:40.3, priority:0, general:0}]},
-            { name: '꿈의숲 효성해링턴플레이스', address: '강북구 미아동 1369', units:[{size:'49㎡', price:10000, rent:40.9, priority:0, general:0}]},
-            { name: '신마곡 벽산블루밍', address: '강서구 방화동 904', units:[{size:'59㎡', price:15280, rent:53.5, priority:0, general:0}]},
-            { name: '천왕이펜하우스 8단지', address: '구로구 천왕동 275', units:[{size:'45㎡', price:8720, rent:32.7, priority:4, general:5}]},
-            { name: '고척리본타운', address: '구로구 고척동 156', units:[{size:'45㎡', price:8880, rent:36.2, priority:2, general:3}]},
-            { name: '포레나노원', address: '노원구 상계동 680', units:[{size:'49㎡', price:10960, rent:43.0, priority:2, general:2}]},
-            { name: '래미안 로이파크', address: '동작구 사당동 1159', units:[{size:'59㎡', price:17680, rent:64.8, priority:1, general:2}]},
-            { name: '북한산두산위브', address: '서대문구 홍은동 467', units:[{size:'40㎡', price:15849, rent:55.4, priority:1, general:2}]},
-            { name: '래미안서초에스티지S', address: '서초구 서초동 1754', units:[{size:'59㎡', price:20560, rent:78.9, priority:3, general:4}]},
-            { name: '신반포자이', address: '서초구 잠원동 160', units:[{size:'59㎡', price:21920, rent:84.0, priority:0, general:0}]},
-            { name: '래미안 신반포 리오센트', address: '서초구 잠원동 161', units:[{size:'48㎡', price:17440, rent:66.7, priority:0, general:0}]},
-            { name: '서초그랑자이', address: '서초구 효령로 391', units:[{size:'59㎡', price:22000, rent:84.4, priority:8, general:8}]},
-            { name: '롯데캐슬 골든힐스', address: '성북구 길음동 1287-1', units:[{size:'59㎡', price:13680, rent:52.3, priority:0, general:0}]},
-            { name: '래미안아트리치', address: '성북구 석관동 410', units:[{size:'39㎡', price:11880, rent:45.5, priority:0, general:0}]},
-            { name: '래미안장위퍼스트하이', address: '성북구 장위동 320', units:[{size:'46㎡', price:14700, rent:57.0, priority:2, general:2}]},
-            { name: '송파헬리오시티', address: '송파구 가락동 913', units:[{size:'39㎡', price:13680, rent:47.9, priority:20, general:20}, {size:'49㎡', price:16720, rent:58.6, priority:9, general:9}]},
-            { name: 'e편한세상 송파파크센트럴', address: '송파구 거여동 617-4', units:[{size:'45㎡', price:14320, rent:50.2, priority:0, general:0}]},
-            { name: '송파시그니처롯데캐슬', address: '송파구 거마로 56', units:[{size:'41㎡', price:13120, rent:46.0, priority:0, general:0}, {size:'39㎡', price:14376, rent:49.1, priority:2, general:3}]},
-            { name: '신목동비바힐스', address: '양천구 신월동 981-2', units:[{size:'58㎡', price:12880, rent:51.6, priority:0, general:0}]},
-            { name: '이든채', address: '양천구 신정동 1320-8', units:[{size:'44㎡', price:9720, rent:36.5, priority:2, general:2}]},
-            { name: '당산센트럴아이파크', address: '영등포구 당산동5가 43', units:[{size:'46㎡', price:13520, rent:50.6, priority:0, general:0}]},
-            { name: '신길센트럴아이파크', address: '영등포구 신길동 4955', units:[{size:'49㎡', price:20280, rent:73.3, priority:0, general:0}]},
-            { name: '용산센트럴파크 헤링턴스퀘어', address: '용산구 서빙고로 17', units:[{size:'40㎡', price:21360, rent:87.2, priority:16, general:17}]},
-            { name: '힐스테이트녹번', address: '은평구 녹번동 282', units:[{size:'40㎡', price:13560, rent:52.0, priority:5, general:6}]},
-            { name: '백련산SK VIEW IPARK', address: '은평구 응암동 767', units:[{size:'40㎡', price:11840, rent:45.4, priority:1, general:2}]},
-            { name: 'DMC롯데캐슬더퍼스트', address: '은평구 수색동 417', units:[{size:'49㎡', price:16968, rent:59.7, priority:0, general:0}]},
-            { name: '녹번역이편한세상캐슬', address: '은평구 은평로 220', units:[{size:'39㎡', price:14520, rent:52.9, priority:2, general:3}]},
-            { name: 'DMC센트럴자이', address: '은평구 증산동 258', units:[{size:'40㎡', price:9666, rent:35.4, priority:0, general:0}]},
-            { name: '경희궁자이', address: '종로구 행촌동 211', units:[{size:'39㎡', price:14720, rent:57.7, priority:13, general:14}]}
-        ];
-        
-        const geocoder = new kakao.maps.services.Geocoder();
-        let currentInfo = null;
+        /* 지도 전체 화면 */
+        #map { width: 100%; height: 100vh; }
 
-        function createMarkerAndInfoWindow(coords, complexData) {
-            const marker = new kakao.maps.Marker({ map, position: coords });
-            
-            // ✅ 정보창 내용에 우선/일반 공급 호수 추가
-            const content = `
-                <div class="info-window">
-                  <div class="title">${complexData.name}</div>
-                  <div class="address">${complexData.address}</div>
-                  <hr>
-                  ${complexData.units.map(u => `
-                    <div>
-                      <div class="unit-info">${toPyeong(u.size)}평 (${u.size})</div>
-                      <div class="supply-info">
-                        우선/일반 공급: <strong>${u.priority} / ${u.general} 호</strong>
-                      </div>
-                      <div class="price-info">
-                        보증금 <strong>${toEokwon(u.price)}</strong> / 월 <strong>${u.rent.toLocaleString()}만원</strong>
-                      </div>
-                    </div>
-                  `).join('<hr>')}
-                </div>
-              `;
-            const infoWin = new kakao.maps.InfoWindow({ content, removable: true });
-            
-            kakao.maps.event.addListener(marker, 'click', () => {
-              if (currentInfo) currentInfo.close();
-              infoWin.open(map, marker);
-              currentInfo = infoWin;
-            });
+        /* 하단 정보 카드 (평소에는 숨겨져 있음) */
+        #info-card {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #fff;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transform: translateY(110%); /* 아래로 숨김 */
+            transition: transform 0.3s ease-out; /* 부드럽게 올라오는 효과 */
+            padding-bottom: 30px; /* 아이폰 하단 바 여백 */
+            box-sizing: border-box;
         }
 
-        complexes.forEach(c => {
-            geocoder.addressSearch(c.name, (results, status) => {
-                if (status === kakao.maps.services.Status.OK) {
-                    const coords = new kakao.maps.LatLng(results[0].y, results[0].x);
-                    createMarkerAndInfoWindow(coords, c);
-                } else {
-                    console.warn(`'${c.name}' 이름 검색 실패, 주소로 재시도...`);
-                    geocoder.addressSearch(c.address, (results2, status2) => {
-                        if(status2 === kakao.maps.services.Status.OK) {
-                            const coords = new kakao.maps.LatLng(results2[0].y, results2[0].x);
-                            createMarkerAndInfoWindow(coords, c);
-                        } else {
-                            console.error(`'${c.address}' 주소 검색도 최종 실패`);
-                        }
-                    });
-                }
+        /* 카드가 활성화되었을 때 */
+        #info-card.active {
+            transform: translateY(0);
+        }
+
+        /* 카드 내부 디자인 */
+        .card-handle {
+            width: 40px;
+            height: 5px;
+            background: #ddd;
+            border-radius: 5px;
+            margin: 10px auto;
+        }
+        .card-content {
+            padding: 10px 20px 25px 20px;
+        }
+        .badge {
+            display: inline-block;
+            background: #eee;
+            color: #555;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .badge.guan { background-color: #e3f2fd; color: #1976d2; } /* 관악구 강조 */
+
+        h2 {
+            margin: 5px 0 15px 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        /* 정보 테이블 */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #666;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+        .info-row:last-child { border: none; }
+        
+        .info-label { font-weight: normal; }
+        .info-value { font-weight: bold; color: #333; }
+        
+        /* 월세 강조 */
+        .price-highlight { color: #d32f2f; font-size: 17px; }
+
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <div id="info-card">
+        <div class="card-handle"></div>
+        <div class="card-content" id="card-inner">
+            </div>
+    </div>
+
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=cc36e0ea25758cc3e8da9744bfd7e612"></script>
+    
+    <script>
+        var mapContainer = document.getElementById('map'); 
+        var mapOption = { 
+            center: new kakao.maps.LatLng(37.514575, 127.0495556), 
+            level: 8 
+        };
+
+        var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+        // 데이터
+        var positions = [
+            { region: "관악", title: "e편한세상 서울대입구", type: "예비4", deposit: "1억 9,150만", rent: "26만 5,500원", lat: 37.4814, lng: 126.9423 },
+            { region: "영등포", title: "당산센트럴 아이파크", type: "일반5+예비9", deposit: "2억 3,660만", rent: "32만 3,000원", lat: 37.5250, lng: 126.9020 },
+            { region: "동작", title: "보라매 자이", type: "일반6+예비10", deposit: "2억 3,850만", rent: "32만 500원", lat: 37.5025, lng: 126.9205 },
+            { region: "송파", title: "잠실올림픽공원 아이파크", type: "일반3+예비10", deposit: "2억 7,210만", rent: "35만 2,500원", lat: 37.5320, lng: 127.1185 },
+            { region: "강동", title: "고덕 그라시움", type: "예비10", deposit: "2억 1,580만", rent: "29만 9,000원", lat: 37.5565, lng: 127.1640 },
+            { region: "강동", title: "롯데캐슬 베네루체", type: "예비6", deposit: "2억 820만", rent: "28만 9,000원", lat: 37.5510, lng: 127.1630 },
+            { region: "서초", title: "반포래미안 아이파크", type: "예비15", deposit: "2억 9,120만", rent: "40만 4,000원", lat: 37.5015, lng: 127.0125 },
+            { region: "서초", title: "반포써밋", type: "예비10", deposit: "2억 9,980만", rent: "41만 5,000원", lat: 37.5042, lng: 127.0150 },
+            { region: "서초", title: "래미안 신반포 리오센트", type: "일반3+예비6", deposit: "2억 9,770만", rent: "41만 2,500원", lat: 37.5143, lng: 127.0095 },
+            { region: "서초", title: "디에이치 반포 라클라스", type: "예비15", deposit: "3억 660만", rent: "42만 5,000원", lat: 37.5013, lng: 127.0088 },
+            { region: "서초", title: "래미안 리더스원", type: "일반3+예비10", deposit: "3억 660만", rent: "42만 5,000원", lat: 37.4925, lng: 127.0275 }
+        ];
+
+        var activeMarker = null; // 현재 선택된 마커
+
+        // 마커 이미지 생성 (파란색 기본 핀)
+        // 관악구만 빨간색으로 표시하고 싶다면 이미지를 분기처리할 수도 있습니다.
+        
+        positions.forEach(function(pos) {
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: new kakao.maps.LatLng(pos.lat, pos.lng)
+            });
+
+            // 마커 클릭 이벤트
+            kakao.maps.event.addListener(marker, 'click', function() {
+                showInfoCard(pos);
+                // 지도 중심을 부드럽게 이동 (살짝 아래로 이동해서 핀이 카드에 안 가려지게)
+                var moveLatLon = new kakao.maps.LatLng(pos.lat - 0.003, pos.lng);
+                map.panTo(moveLatLon);
             });
         });
 
+        // 지도 빈 곳 클릭 시 카드 숨기기
         kakao.maps.event.addListener(map, 'click', function() {
-            if (currentInfo) {
-                currentInfo.close();
-                currentInfo = null;
-            }
+            hideInfoCard();
         });
-      });
-    });
-  </script>
+
+        var card = document.getElementById('info-card');
+        var cardInner = document.getElementById('card-inner');
+
+        function showInfoCard(data) {
+            var badgeClass = data.region === "관악" ? "badge guan" : "badge";
+            
+            var html = `
+                <span class="${badgeClass}">${data.region}</span>
+                <h2>${data.title}</h2>
+                <div class="info-row">
+                    <span class="info-label">모집호수</span>
+                    <span class="info-value">${data.type}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">최대보증금</span>
+                    <span class="info-value">${data.deposit}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">월임대료</span>
+                    <span class="info-value price-highlight">${data.rent}</span>
+                </div>
+            `;
+            
+            cardInner.innerHTML = html;
+            card.classList.add('active');
+        }
+
+        function hideInfoCard() {
+            card.classList.remove('active');
+        }
+
+    </script>
 </body>
 </html>
